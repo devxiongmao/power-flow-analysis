@@ -1,0 +1,40 @@
+#options {
+  border-color: black;
+  border-width: 2px;
+  border-style: solid;
+  background-color: #044E96;
+  color: white;
+  font-size: 20px;
+  height: 40px;
+}
+
+#options td {
+  padding: 7px 28px 3px 3px;
+}
+
+.header-link {
+  padding: 5px 5px 5px 5px;
+  text-decoration: none;
+}
+
+#options a:link {
+  color: white;
+}
+
+#options a:visited {
+  color: white;
+}
+
+#options a:hover {
+  color: white;
+  background-color: #B4B4B4;
+}
+
+body{
+  font-family: sans-serif;
+}
+
+td.sch, tr.sch {
+  padding:0;
+  font-size:0;
+}

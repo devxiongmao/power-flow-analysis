@@ -1,0 +1,37 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+  <title>Online Power Flow Analysis Tool</title>
+  <link type="text/css" rel="stylesheet" href="/main.css" />
+</head>
+<body>
+<div id="header">
+  <h1>Online Power Flow Assessment Tool</h1>
+  <p>Capstone Design Project</p>
+  <p>&copy 2018 - 2019 Darian Brandolino, Adriano Mazzucco & Jonathan Psaila
+  </p>
+  <div id="options">
+    <table>
+      <tr>
+        <td><a class="header-link" href="/">Home</a></td>
+        <td><a class="header-link" href="/manual">Manual Input</a></td>
+        <td><a class="header-link" href="/info">Technical Info</a></td>
+        <td><a class="header-link" href="/about">About</a></td>
+      </tr>
+    </table>
+  </div>
+  <div>
+    <h1>Database Input Entry</h1>
+    <form method="post" action="/check" enctype="multipart/form-data">
+      <h2>1. Upload bus data spreadsheet (CSV format):</h2>
+      <input type="file" name="busFile">
+      <h2>2. Upload line data spreadsheet (CSV format):</h2>
+      <input type="file" name="lineFile">
+      <h2>3. Click Submit to begin processing:</h2>
+      <td><input type="submit"></td>
+    </form>
+  </div>
+</body>
+</html>

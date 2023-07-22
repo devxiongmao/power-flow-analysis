@@ -1,0 +1,130 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+    <title>Online Power Flow Analysis Tool</title>
+    <link type="text/css" rel="stylesheet" href="/main.css" />
+  </head>
+  <body>
+    <div id="header">
+      <h1>Online Power Flow Assessment Tool</h1>
+      <p>Capstone Design Project</p>
+      <p>&copy 2018 - 2019 Darian Brandolino, Adriano Mazzucco & Jonathan Psaila
+      </p>
+      <div id="options">
+        <table>
+          <tr>
+            <td><a class="header-link" href="/">Home</a></td>
+            <td><a class="header-link" href="/manual">Manual Input</a></td>
+            <td><a class="header-link" href="/info">Technical Info</a></td>
+            <td><a class="header-link" href="/about">About</a></td>
+          </tr>
+        </table>
+      </div>
+    </div>
+    <div>
+      <h1>Results</h1>
+      <table style="border-spacing: 15px;">
+        <tr>
+          <td><b>Number</b></td>
+          <td><b>Bus Type</b></td>
+          <td><b>Voltage</b></td>
+          <td><b>Angle</b></td>
+          <td><b>Real Power</b></td>
+          <td><b>Reactive Power</b></td>
+        </tr>
+        <% @num_of_buses.times do |i| %>
+          <tr>
+            <td><%= i + 1%></td>
+            <td><%= @types[i]%></td>
+            <td><%= @v_data[i]%></td>
+            <td><%= @d_data[i]%></td>
+            <td><%= @p_data[i]%></td>
+            <td><%= @q_data[i]%></td>
+          </tr>
+        <% end %>
+      </table>
+      <p>Download Results in CSV format by clicking <a href="/download/<%=@time%>">HERE</a></p>
+      <h1>Newton Raphson Loadflow Analysis</h1>
+      <table style="border-spacing: 15px;">
+        <tr>
+          <td><b>Bus #</b></td>
+          <td><b>V (pu)</b></td>
+          <td><b>Angle (degree)</b></td>
+          <td><b>Injection MW</b></td>
+          <td><b>Injection MVar</b></td>
+          <td><b>Generation MW</b></td>
+          <td><b>Generation MVar</b></td>
+          <td><b>Load MW</b></td>
+          <td><b>Load MVar</b></td>
+        </tr>
+        <% @num_of_buses.times do |i| %>
+        <tr>
+          <td><%= i + 1%></td>
+          <td><%= @v_data[i]%></td>
+          <td><%= @del_degree[i]%></td>
+          <td><%= @p_injection[i]%></td>
+          <td><%= @q_injection[i]%></td>
+          <td><%= @power_generated[i]%></td>
+          <td><%= @reactive_generated[i]%></td>
+          <td><%= @pl_data[i]%></td>
+          <td><%= @ql_data[i]%></td>
+        </tr>
+        <% end %>
+        <tr>
+          <td><b>Total</b></td>
+          <td></td>
+          <td></td>
+          <td><%=@pTotal%></td>
+          <td><%=@qTotal%></td>
+          <td><%=@pgTotal%></td>
+          <td><%=@qgTotal%></td>
+          <td><%=@plTotal%></td>
+          <td><%=@qlTotal%></td>
+        </tr>
+      </table>
+      <h1>Line Flow and Losses</h1>
+      <table style="border-spacing: 15px;">
+        <tr>
+          <td><b>From Bus</b></td>
+          <td><b>To Bus</b></td>
+          <td><b>P MW</b></td>
+          <td><b>Q MVar</b></td>
+          <td><b>From Bus</b></td>
+          <td><b>To Bus</b></td>
+          <td><b>P MW</b></td>
+          <td><b>Q MVar</b></td>
+          <td><b>Line Loss MW</b></td>
+          <td><b>Line Loss MVar</b></td>
+        </tr>
+        <% @z.each do |row| %>
+        <tr>
+          <td><%=row[0]%></td>
+          <td><%=row[1]%></td>
+          <td><%=row[2]%></td>
+          <td><%=row[3]%></td>
+          <td><%=row[1]%></td>
+          <td><%=row[0]%></td>
+          <td><%=row[6]%></td>
+          <td><%=row[7]%></td>
+          <td><%=row[8]%></td>
+          <td><%=row[9]%></td>
+        </tr>
+        <% end %>
+        <tr>
+          <td><b>Total Loss</b></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td><%=@line_loss_1%></td>
+          <td><%=@line_loss_2%></td>
+        </tr>
+      </table>    
+    </div>
+  </body>
+</html>

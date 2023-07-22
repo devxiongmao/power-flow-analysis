@@ -1,0 +1,228 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+    <title>Online Power Flow Analysis Tool</title>
+    <link type="text/css" rel="stylesheet" href="/main.css" />
+    <script src="/add_line.js" language="Javascript" type="text/javascript"></script>
+    <script src="/populate_values.js" language="Javascript" type="text/javascript"></script>
+    <script src="/change_bus_type.js" language="Javascript" type="text/javascript"></script>
+    <script src="/buildLines.js" language="Javascript" type="text/javascript"></script>
+    <script src="/Validation.js" language="Javascript" type="text/javascript"></script>
+
+  </head>
+  <body>
+    <div id="header">
+      <h1>Online Power Flow Assessment Tool</h1>
+      <p>Capstone Design Project</p>
+      <p>&copy 2018 - 2019 Darian Brandolino, Adriano Mazzucco & Jonathan Psaila
+      </p>
+      <div id="options">
+        <table>
+          <tr>
+            <td><a class="header-link" href="/">Home</a></td>
+            <td><a class="header-link" href="/manual">Manual Input</a></td>
+            <td><a class="header-link" href="/info">Technical Info</a></td>
+            <td><a class="header-link" href="/about">About</a></td>
+          </tr>
+        </table>
+      </div>
+    </div>
+    <div>
+      <h1>Manual Data Entry</h1>
+      <form method="post" action="/analyze">
+        <h2>1. Enter bus data:</h2>
+        <table>
+          <tr>
+            <th>Bus #</th>
+            <th>Type</th>
+            <th>Voltage</th>
+            <th>Angle</th>
+            <th>PGi</th>
+            <th>QGi</th>
+            <th>PLi</th>
+            <th>QLi</th>
+            <th>Qmin</th>
+            <th>Qmax</th>
+          </tr>
+          <tbody id="bus-table">
+          <tr id="1">
+            <td class="bus-num" align="center">1</td>
+            <td>
+              <select class="bus-select" name="type-1" id="bus-selector-1" onchange="changeBusType('bus-selector-1', 'bus-img-1');">
+                <option value="slack">Slack Bus</option>
+                <option value="generator">Generator Bus</option>
+                <option value="load">Load Bus</option>
+              </select>
+            </td>
+            <td><input class="bus-voltage" type="text" id="entry-1" onchange="Validation('bus-selector-1', 'entry-1', 'entry-2', 'entry-3', 'entry-4', 'entry-5', 'entry-6', 'entry-7', 'entry-8','1')" oninput="populateValues('entry-1', 'schem-1');"  name="v1"></td>
+            <td><input class="bus-angle" type="text" id="entry-2" onchange="Validation('bus-selector-1', 'entry-1', 'entry-2', 'entry-3', 'entry-4', 'entry-5', 'entry-6', 'entry-7', 'entry-8','1')" oninput="populateValues('entry-2', 'schem-2');" name="d1"></td>
+            <td><input class="bus-pgi" type="text" id="entry-3" onchange="Validation('bus-selector-1', 'entry-1', 'entry-2', 'entry-3', 'entry-4', 'entry-5', 'entry-6', 'entry-7', 'entry-8','1')" oninput="populateValues('entry-3', 'schem-3');" name="pg1"></td>
+            <td><input class="bus-qgi" type="text" id="entry-4" onchange="Validation('bus-selector-1', 'entry-1', 'entry-2', 'entry-3', 'entry-4', 'entry-5', 'entry-6', 'entry-7', 'entry-8','1')" oninput="populateValues('entry-4', 'schem-4');" name="qg1"></td>
+            <td><input class="bus-pli" type="text" id="entry-5" onchange="Validation('bus-selector-1', 'entry-1', 'entry-2', 'entry-3', 'entry-4', 'entry-5', 'entry-6', 'entry-7', 'entry-8','1')" oninput="populateValues('entry-5', 'schem-5');" name="pl1"></td>
+            <td><input class="bus-qli" type="text" id="entry-6" onchange="Validation('bus-selector-1', 'entry-1', 'entry-2', 'entry-3', 'entry-4', 'entry-5', 'entry-6', 'entry-7', 'entry-8','1')" oninput="populateValues('entry-6', 'schem-6');" name="ql1"></td>
+            <td><input class="bus-qmin" type="text" id="entry-7" onchange="Validation('bus-selector-1', 'entry-1', 'entry-2', 'entry-3', 'entry-4', 'entry-5', 'entry-6', 'entry-7', 'entry-8','1')" oninput="populateValues('entry-7', 'schem-7');" name="qmin1"></td>
+            <td><input class="bus-qmax" type="text" id="entry-8" onchange="Validation('bus-selector-1', 'entry-1', 'entry-2', 'entry-3', 'entry-4', 'entry-5', 'entry-6', 'entry-7', 'entry-8','1')" oninput="populateValues('entry-8', 'schem-8');" name="qmax1"></td>
+
+            <td class="check" id="line-1"><img width="20px" src="redx.png"></img></td>
+          </tr>
+          
+          <tr id="2">
+            <td class="bus-num" align="center">2</td>
+            <td>
+              <select class="bus-select" name="type-2" id="bus-selector-2" onchange="changeBusType('bus-selector-2', 'bus-img-2');">
+                <option value="slack">Slack Bus</option>
+                <option value="generator">Generator Bus</option>
+                <option value="load">Load Bus</option>
+              </select>
+            </td>
+            <td><input class="bus-voltage" type="text" id="entry-9"  onchange="Validation('bus-selector-2', 'entry-9', 'entry-10', 'entry-11', 'entry-12', 'entry-13', 'entry-14', 'entry-15', 'entry-16','2')" oninput="populateValues('entry-9', 'schem-9');" name="v2"></td>
+            <td><input class="bus-angle" type="text" id="entry-10"  onchange="Validation('bus-selector-2', 'entry-9', 'entry-10', 'entry-11', 'entry-12', 'entry-13', 'entry-14', 'entry-15', 'entry-16','2')" oninput="populateValues('entry-10', 'schem-10');" name="d2"></td>
+            <td><input class="bus-pgi" type="text" id="entry-11"  onchange="Validation('bus-selector-2', 'entry-9', 'entry-10', 'entry-11', 'entry-12', 'entry-13', 'entry-14', 'entry-15', 'entry-16','2')" oninput="populateValues('entry-11', 'schem-11');" name="pg2"></td>
+            <td><input class="bus-qgi" type="text" id="entry-12"  onchange="Validation('bus-selector-2', 'entry-9', 'entry-10', 'entry-11', 'entry-12', 'entry-13', 'entry-14', 'entry-15', 'entry-16','2')" oninput="populateValues('entry-12', 'schem-12');" name="qg2"></td>
+            <td><input class="bus-pli" type="text" id="entry-13"  onchange="Validation('bus-selector-2', 'entry-9', 'entry-10', 'entry-11', 'entry-12', 'entry-13', 'entry-14', 'entry-15', 'entry-16','2')" oninput="populateValues('entry-13', 'schem-13');" name="pl2"></td>
+            <td><input class="bus-qli" type="text" id="entry-14"  onchange="Validation('bus-selector-2', 'entry-9', 'entry-10', 'entry-11', 'entry-12', 'entry-13', 'entry-14', 'entry-15', 'entry-16','2')" oninput="populateValues('entry-14', 'schem-14');" name="ql2"></td>
+            <td><input class="bus-qmin" type="text" id="entry-15"  onchange="Validation('bus-selector-2', 'entry-9', 'entry-10', 'entry-11', 'entry-12', 'entry-13', 'entry-14', 'entry-15', 'entry-16','2')" oninput="populateValues('entry-15', 'schem-15');" name="qmin2"></td>
+            <td><input class="bus-qmax" type="text" id="entry-16"  onchange="Validation('bus-selector-2', 'entry-9', 'entry-10', 'entry-11', 'entry-12', 'entry-13', 'entry-14', 'entry-15', 'entry-16','2')" oninput="populateValues('entry-16', 'schem-16');" name="qmax2"></td>
+
+            <td class="check" id="line-2">
+              <img width="20px" src="redx.png"></img>
+            </td>
+          </tr>
+            
+          </tbody>
+        </table>
+        <p></p>
+        <input type="button" value="Add Bus" onClick="addLine('bus');">
+        <h2>2. Enter line data:</h2>
+        <table>
+          <tr>
+            <th>Line #</th>
+            <th>From Bus</th>
+            <th>To Bus</th>
+            <th>R</th>
+            <th>X</th>
+            <th>B/2</th>
+            <th>X'mer</th>
+          </tr>
+          <tbody id="line-table">
+          <tr id="line-1">
+            <td class="line-num" align="center">1</td>
+            <td><input type="text" name="from-1" id="line-entry-1" oninput="buildLines(1);"></td>
+            <td><input type="text" name="to-1" id="line-entry-2" oninput="buildLines(1);"></td>
+            <td><input type="text" name="line-resistance-1" id="line-entry-3" oninput="buildLines(1);"></td>
+            <td><input type="text" name="line-reactance-1" id="line-entry-4" oninput="buildLines(1);"></td>
+            <td><input type="text" name="ground-admittance-1" id="line-entry-5" oninput="buildLines(1);"></td>
+            <td><input type="text" name="tap-setting-1" id="line-entry-6" oninput="buildLines(1);"></td>
+          </tr>
+          <tr id="line-2">
+            <td class="line-num" align="center">2</td>
+            <td><input type="text" name="from-2" id="line-entry-7" oninput="buildLines(2);"></td>
+            <td><input type="text" name="to-2" id="line-entry-8" oninput="buildLines(2);"></td>
+            <td><input type="text" name="line-resistance-2" id="line-entry-9" oninput="buildLines(2);"></td>
+            <td><input type="text" name="line-reactance-2" id="line-entry-10" oninput="buildLines(2);"></td>
+            <td><input type="text" name="ground-admittance-2" id="line-entry-11" oninput="buildLines(2);"></td>
+            <td><input type="text" name="tap-setting-2" id="line-entry-12" oninput="buildLines(2);"></td>
+          </tr>
+          </tbody>
+        </table>
+        <p></p>
+        <input type="button" value="Add Line" onClick="addLine('line');">
+        <h2>3. Click submit to begin processing:</h2>
+        <td><input type="submit" id ="submitButton"></td>
+      </form>
+      <h2>Dynamic Schematic</h2>
+      <table style="border-collapse: collapse" id="schematic">
+        <tr>
+          <td align="center" id="schem-1">
+            V:  
+          </td>
+          <td align="center" id="schem-9">
+            V:  
+          </td>
+        </tr>
+        <tr>
+          <td align="center" id="schem-2">
+            A:  
+          </td>
+          <td align="center" id="schem-10">
+            A:  
+          </td>
+        </tr>
+        <tr>
+          <td align="center" id="schem-3">
+            PGi:  
+          </td>
+          <td align="center" id="schem-11">
+            PGi:  
+          </td>
+        </tr>
+        <tr>
+          <td align="center" id="schem-4">
+            QGi:  
+          </td>
+          <td align="center" id="schem-12">
+            QGi:  
+          </td>
+        </tr>
+        <tr>
+          <td align="center" id="schem-5">
+            PLi:  
+          </td>
+          <td align="center" id="schem-13">
+            PLi:  
+          </td>
+        </tr>
+        <tr>
+          <td align="center" id="schem-6">
+            QLi:  
+          </td>
+          <td align="center" id="schem-14">
+            QLi:  
+          </td>
+        </tr>
+        <tr>
+          <td align="center" id="schem-7">
+            QMin:  
+          </td>
+          <td align="center" id="schem-15">
+            QMin:  
+          </td>
+        </tr>
+        <tr>
+          <td align="center" id="schem-8">
+            QMax:  
+          </td>
+          <td align="center" id="schem-16">
+            QMax:  
+          </td>
+        </tr>
+        <tr class="sch">
+          <td class="sch" id="bus-img-1">
+            <img width="150px" src="Slack.png">
+          </td>
+          <td class="sch" id="bus-img-2">
+            <img width="150px" src="Slack.png">
+          </td>
+        </tr>
+        <tr class="sch" id="schematic-line-1">
+          <td class="sch">
+            <img width="150px" src="No-connect.png">
+          </td>
+          <td class="sch">
+            <img width="150px" src="No-connect.png">
+          </td>
+        </tr>
+        <tr class="sch" id="schematic-line-2">
+          <td class="sch">
+            <img width="150px" src="No-connect.png">
+          </td>
+          <td class="sch">
+            <img width="150px" src="No-connect.png">
+          </td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>
