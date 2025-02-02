@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'sinatra'
 require_relative 'lib/cramers_rule'
 require_relative 'lib/y_bus_creator'
@@ -6,10 +8,10 @@ require 'webrick'
 require 'webrick/https'
 require 'openssl'
 
-#cert = OpenSSL::X509::Certificate.new File.read 'c:/Apache24/htdocs/server.crt'
-#pkey = OpenSSL::PKey::RSA.new File.read 'c:/Apache24/htdocs/server.key'
+# cert = OpenSSL::X509::Certificate.new File.read 'c:/Apache24/htdocs/server.crt'
+# pkey = OpenSSL::PKey::RSA.new File.read 'c:/Apache24/htdocs/server.key'
 
-#server = WEBrick::HTTPServer.new(:Port => 4567,
+# server = WEBrick::HTTPServer.new(:Port => 4567,
 #                                 :SSLEnable => true,
 #                                 :SSLCertificate => cert,
 #                                 :SSLPrivateKey => pkey)
@@ -30,17 +32,17 @@ get('/about') do
   erb :about
 end
 
-get('/download/bus') do 
-  send_file "bus_example.csv", :filename => "bus_example.csv"
-end 
+get('/download/bus') do
+  send_file 'bus_example.csv', filename: 'bus_example.csv'
+end
 
-get('/download/line') do 
-  send_file "line_example.csv", :filename => "line_example.csv"
-end 
+get('/download/line') do
+  send_file 'line_example.csv', filename: 'line_example.csv'
+end
 
 get('/download/:time') do
   time = params['time'].to_s
-  send_file "results/PowerFlowAnalysis-NR-#{time}.csv", :filename => "PowerFlowAnalysis-NR-#{time}.csv"
+  send_file "results/PowerFlowAnalysis-NR-#{time}.csv", filename: "PowerFlowAnalysis-NR-#{time}.csv"
 end
 
 post('/check') do
@@ -51,7 +53,8 @@ post('/check') do
   @all_bus_lines = bus_spreadsheet_content.split("\r\n")
 
   @all_bus_lines.each_with_index do |line, i|
-    next if i == 0
+    next if i.zero?
+
     line.split(',').each { |value| @bus_data.push(value) }
   end
 
@@ -59,13 +62,13 @@ post('/check') do
 
   @all_line_lines = line_spreadsheet_content.split("\r\n")
   @all_line_lines.each_with_index do |line, i|
-    next if i == 0
+    next if i.zero?
+
     line.split(',').each { |value| @line_data.push(value) }
   end
-  #{}"#{@bus_data.inspect}"
+  # {}"#{@bus_data.inspect}"
   erb :post_check
 end
-
 
 post('/analyze') do
   @types = []
@@ -89,14 +92,14 @@ post('/analyze') do
   num_of_pv_busses = 0
   num_of_lines = 0
 
-  params.each do |key, value|
+  params.each_key do |key|
     @num_of_buses += 1 if key.include?('type') # count the number of busses present
     num_of_lines += 1 if key.include?('from') # count the number of lines present
   end
 
   #### BUILD THE Y BUS MATRIX ####
-  y_bus_creator = YBusCreator.new(@num_of_buses,num_of_lines,params)
-  y_bus = y_bus_creator.create_y_bus(@num_of_buses,num_of_lines)
+  y_bus_creator = YBusCreator.new(@num_of_buses, num_of_lines, params)
+  y_bus = y_bus_creator.create_y_bus(@num_of_buses, num_of_lines)
   from_bus = y_bus_creator.return_from_bus_list
   to_bus = y_bus_creator.return_to_bus_list
 
@@ -124,7 +127,7 @@ post('/analyze') do
     @ql_data[i] = params["ql#{i + 1}"].to_f / 100
     @qmin[i] = params["qmin#{i + 1}"].to_f / 100
     @qmax[i] = params["qmax#{i + 1}"].to_f / 100
-    @p_data[i] = (params["pg#{i + 1}"].to_f - params["pl#{i + 1}"].to_f)  / 100
+    @p_data[i] = (params["pg#{i + 1}"].to_f - params["pl#{i + 1}"].to_f) / 100
     @q_data[i] = (params["qg#{i + 1}"].to_f - params["ql#{i + 1}"].to_f) / 100
   end
 
@@ -134,29 +137,31 @@ post('/analyze') do
   tolerance = 1
   iteration_num = 1
 
-  while tolerance >0.000001
+  while tolerance > 0.000001
     # Calculate P and Q
     processing_p_values = Array.new(@num_of_buses, 0)
     processing_q_values = Array.new(@num_of_buses, 0)
 
     @num_of_buses.times do |i|
       @num_of_buses.times do |k|
-        processing_p_values[i] = processing_p_values[i] + (@v_data[i] * @v_data[k]*(y_bus[i][k][0]*Math.cos(@d_data[i]-@d_data[k]) + y_bus[i][k][1]*Math.sin(@d_data[i]-@d_data[k])))
-        processing_q_values[i] = processing_q_values[i] + (@v_data[i] * @v_data[k]*(y_bus[i][k][0]*Math.sin(@d_data[i]-@d_data[k]) - y_bus[i][k][1]*Math.cos(@d_data[i]-@d_data[k])))
+        processing_p_values[i] =
+          processing_p_values[i] + (@v_data[i] * @v_data[k] * (y_bus[i][k][0] * Math.cos(@d_data[i] - @d_data[k]) + y_bus[i][k][1] * Math.sin(@d_data[i] - @d_data[k])))
+        processing_q_values[i] =
+          processing_q_values[i] + (@v_data[i] * @v_data[k] * (y_bus[i][k][0] * Math.sin(@d_data[i] - @d_data[k]) - y_bus[i][k][1] * Math.cos(@d_data[i] - @d_data[k])))
       end
     end
 
-    
     if (iteration_num <= 7) && (iteration_num > 2)
       @num_of_buses.times do |n|
-        next if n == 0
-        if @types[n] == 'Generator'
-          qg = processing_q_values[n] + @ql_data[n]
-          if qg < @qmin[n]
-            @v_data[n] = @v_data[n] + 0.01
-          elsif qg > @qmax[n]
-            @v_data[n] = @v_data[n] - 0.01
-          end
+        next if n.zero?
+
+        next unless @types[n] == 'Generator'
+
+        qg = processing_q_values[n] + @ql_data[n]
+        if qg < @qmin[n]
+          @v_data[n] = @v_data[n] + 0.01
+        elsif qg > @qmax[n]
+          @v_data[n] = @v_data[n] - 0.01
         end
       end
     end
@@ -170,7 +175,7 @@ post('/analyze') do
 
     k = 0
     dQ = Array.new(num_of_load_buses, 0)
-      
+
     @num_of_buses.times do |i|
       if params["type-#{i + 1}"] == 'load'
         dQ[k] = dQa[i] # CHECK IN MATLAB THIS LINE, ALSO, INDEX AT 0?
@@ -180,7 +185,8 @@ post('/analyze') do
 
     dP = []
     @num_of_buses.times do |i|
-      next if i == 0
+      next if i.zero?
+
       dP.push(dPa[i]) # CHECK IN MATLAB THIS LINE, ALSO, INDEX AT 0?
     end
 
@@ -193,7 +199,6 @@ post('/analyze') do
     dQ.each do |value|
       error_vector.push(value)
     end
-
 
     # JACOBIAN DERIVATION
     # J1 - Derivative of Real Power Injections with Angles..
@@ -212,16 +217,18 @@ post('/analyze') do
         n = k + 1
         if n == m
           @num_of_buses.times do |n|
-            j1[i][k] = j1[i][k] + @v_data[m]*@v_data[n]*(-y_bus[m][n][0]*Math.sin(@d_data[m]-@d_data[n]) + y_bus[m][n][1]*Math.cos(@d_data[m]-@d_data[n]))
+            j1[i][k] =
+              j1[i][k] + @v_data[m] * @v_data[n] * (-y_bus[m][n][0] * Math.sin(@d_data[m] - @d_data[n]) + y_bus[m][n][1] * Math.cos(@d_data[m] - @d_data[n]))
           end
-          j1[i][k] = j1[i][k] - y_bus[m][m][1]*@v_data[m]**2
+          j1[i][k] = j1[i][k] - y_bus[m][m][1] * @v_data[m]**2
         else
-          j1[i][k] = @v_data[m]*@v_data[n]*(y_bus[m][n][0]*Math.sin(@d_data[m]-@d_data[n]) - y_bus[m][n][1]*Math.cos(@d_data[m]-@d_data[n]))
-        end 
+          j1[i][k] =
+            @v_data[m] * @v_data[n] * (y_bus[m][n][0] * Math.sin(@d_data[m] - @d_data[n]) - y_bus[m][n][1] * Math.cos(@d_data[m] - @d_data[n]))
+        end
       end
-    end 
+    end
 
-      # J2 - Derivative of real power injections
+    # J2 - Derivative of real power injections
     j2 = []
 
     (@num_of_buses - 1).times do |i|
@@ -234,17 +241,19 @@ post('/analyze') do
     (@num_of_buses - 1).times do |i|
       m = i + 1
       num_of_load_buses.times do |k|
-        n = load_bus_numbers[k] 
+        n = load_bus_numbers[k]
         if n == m
           @num_of_buses.times do |n|
-            j2[i][k] = j2[i][k] + @v_data[n]*(y_bus[m][n][0]*Math.cos(@d_data[m]-@d_data[n]) + y_bus[m][n][1]*Math.sin(@d_data[m]-@d_data[n]))
+            j2[i][k] =
+              j2[i][k] + @v_data[n] * (y_bus[m][n][0] * Math.cos(@d_data[m] - @d_data[n]) + y_bus[m][n][1] * Math.sin(@d_data[m] - @d_data[n]))
           end
-          j2[i][k] = j2[i][k] + y_bus[m][m][0]*@v_data[m]
+          j2[i][k] = j2[i][k] + y_bus[m][m][0] * @v_data[m]
         else
-          j2[i][k] = @v_data[m]*(y_bus[m][n][0]*Math.cos(@d_data[m]-@d_data[n]) + y_bus[m][n][1]*Math.sin(@d_data[m]-@d_data[n]))
-        end 
+          j2[i][k] =
+            @v_data[m] * (y_bus[m][n][0] * Math.cos(@d_data[m] - @d_data[n]) + y_bus[m][n][1] * Math.sin(@d_data[m] - @d_data[n]))
+        end
       end
-    end 
+    end
 
     # J3 - Derivative of reactive power injections
     j3 = []
@@ -257,19 +266,21 @@ post('/analyze') do
     end
 
     num_of_load_buses.times do |i|
-      m = load_bus_numbers[i] 
+      m = load_bus_numbers[i]
       (@num_of_buses - 1).times do |k|
         n = k + 1
         if n == m
           @num_of_buses.times do |n|
-            j3[i][k] = j3[i][k] + @v_data[m]*@v_data[n]*(y_bus[m][n][0]*Math.cos(@d_data[m]-@d_data[n]) + y_bus[m][n][1]*Math.sin(@d_data[m]-@d_data[n]))
+            j3[i][k] =
+              j3[i][k] + @v_data[m] * @v_data[n] * (y_bus[m][n][0] * Math.cos(@d_data[m] - @d_data[n]) + y_bus[m][n][1] * Math.sin(@d_data[m] - @d_data[n]))
           end
-          j3[i][k] = j3[i][k] - y_bus[m][m][0]*@v_data[m]**2
+          j3[i][k] = j3[i][k] - y_bus[m][m][0] * @v_data[m]**2
         else
-          j3[i][k] = @v_data[m]*@v_data[n]*(-y_bus[m][n][0]*Math.cos(@d_data[m]-@d_data[n]) - y_bus[m][n][1]*Math.sin(@d_data[m]-@d_data[n]))
-        end 
+          j3[i][k] =
+            @v_data[m] * @v_data[n] * (-y_bus[m][n][0] * Math.cos(@d_data[m] - @d_data[n]) - y_bus[m][n][1] * Math.sin(@d_data[m] - @d_data[n]))
+        end
       end
-    end 
+    end
 
     # J3 - Derivative of reactive power injections
     j4 = []
@@ -287,15 +298,17 @@ post('/analyze') do
         n = load_bus_numbers[k]
         if n == m
           @num_of_buses.times do |n|
-            j4[i][k] = j4[i][k] + @v_data[n]*(y_bus[m][n][0]*Math.sin(@d_data[m]-@d_data[n]) - y_bus[m][n][1]*Math.cos(@d_data[m]-@d_data[n]))
+            j4[i][k] =
+              j4[i][k] + @v_data[n] * (y_bus[m][n][0] * Math.sin(@d_data[m] - @d_data[n]) - y_bus[m][n][1] * Math.cos(@d_data[m] - @d_data[n]))
           end
-          j4[i][k] = j4[i][k] - y_bus[m][m][1]*@v_data[m]
+          j4[i][k] = j4[i][k] - y_bus[m][m][1] * @v_data[m]
         else
-          j4[i][k] = @v_data[m]*(y_bus[m][n][0]*Math.sin(@d_data[m]-@d_data[n]) - y_bus[m][n][1]*Math.cos(@d_data[m]-@d_data[n]))
-        end 
+          j4[i][k] =
+            @v_data[m] * (y_bus[m][n][0] * Math.sin(@d_data[m] - @d_data[n]) - y_bus[m][n][1] * Math.cos(@d_data[m] - @d_data[n]))
+        end
       end
-    end 
-      
+    end
+
     jacobian = []
 
     (@num_of_buses + num_of_load_buses - 1).times do |i| # Initialize empty nxn Y Bus matrix
@@ -303,7 +316,7 @@ post('/analyze') do
     end
 
     j1.each_with_index do |row_j1, i|
-      row_j1.each_with_index do |value, j|
+      row_j1.each_with_index do |value, _j|
         jacobian[i].push(value)
       end
     end
@@ -344,15 +357,17 @@ post('/analyze') do
       k = (@num_of_buses - 1 + i)
       dV[i] = correction_vector[k]
     end
-      
+
     @num_of_buses.times do |i|
-      next if i == 0
+      next if i.zero?
+
       @d_data[i] = dTh[i - 1] + @d_data[i]
-    end 
+    end
 
     k = 0
     @num_of_buses.times do |i|
-      next if i == 0
+      next if i.zero?
+
       if params["type-#{i + 1}"] == 'load'
         @v_data[i] = dV[k] + @v_data[i]
         k += 1
@@ -360,7 +375,7 @@ post('/analyze') do
     end
 
     iteration_num += 1
-    absolute = error_vector.map { |value| value < 0 ? -1 * value : value}
+    absolute = error_vector.map { |value| value.negative? ? -1 * value : value }
     tolerance = absolute.max
   end
   @p_data = processing_p_values
@@ -370,16 +385,16 @@ post('/analyze') do
   @del_degree = []
 
   @num_of_buses.times do |i|
-    vMag[i] = [0,0]
+    vMag[i] = [0, 0]
   end
 
   @num_of_buses.times do |i|
-    vMag[i][0] = @v_data[i]*Math.cos(@d_data[i])
-    vMag[i][1] = @v_data[i]*Math.sin(@d_data[i])
+    vMag[i][0] = @v_data[i] * Math.cos(@d_data[i])
+    vMag[i][1] = @v_data[i] * Math.sin(@d_data[i])
   end
 
   @num_of_buses.times do |i|
-    @del_degree[i] = (180 * @d_data[i])/Math::PI 
+    @del_degree[i] = (180 * @d_data[i]) / Math::PI
   end
 
   @z = []
@@ -396,16 +411,16 @@ post('/analyze') do
     iij[i] = []
     sij[i] = []
     @num_of_buses.times do |j|
-      iij[i][j] = [0,0]
-      sij[i][j] = [0,0]
+      iij[i][j] = [0, 0]
+      sij[i][j] = [0, 0]
     end
-  end 
+  end
 
   i_matrix = []
 
-# BUS CURRENT INJECTIONS
+  # BUS CURRENT INJECTIONS
   @num_of_buses.times do |i|
-    i_matrix[i] = [0,0]
+    i_matrix[i] = [0, 0]
 
     @num_of_buses.times do |j|
       i_matrix[i][0] = i_matrix[i][0] + (y_bus[i][j][0] * vMag[j][0] - y_bus[i][j][1] * vMag[j][1])
@@ -417,7 +432,7 @@ post('/analyze') do
   iMag = []
   @num_of_buses.times do |i|
     iMag[i] = (i_matrix[i][0]**2 + i_matrix[i][1]**2)**0.5
-    iAngle[i] = Math.atan(i_matrix[i][1]/i_matrix[i][0])    ## If wrong final result, change to be in accordance
+    iAngle[i] = Math.atan(i_matrix[i][1] / i_matrix[i][0]) ## If wrong final result, change to be in accordance
   end
 
   # LINE CURRENT FLOWS
@@ -425,11 +440,11 @@ post('/analyze') do
     val_p = from_bus[m]
     val_q = to_bus[m]
     real_part = vMag[val_p][0] - vMag[val_q][0]
-    imag_part  = vMag[val_p][1] - vMag[val_q][1]
-    iij[val_p][val_q][0] = -1*(real_part*y_bus[val_p][val_q][0] - imag_part*y_bus[val_p][val_q][1])
-    iij[val_p][val_q][1] = -1*(real_part*y_bus[val_p][val_q][1] + imag_part*y_bus[val_p][val_q][0])
-    iij[val_q][val_p][0] = -1*iij[val_p][val_q][0]
-    iij[val_q][val_p][1] = -1*iij[val_p][val_q][1]
+    imag_part = vMag[val_p][1] - vMag[val_q][1]
+    iij[val_p][val_q][0] = -1 * (real_part * y_bus[val_p][val_q][0] - imag_part * y_bus[val_p][val_q][1])
+    iij[val_p][val_q][1] = -1 * (real_part * y_bus[val_p][val_q][1] + imag_part * y_bus[val_p][val_q][0])
+    iij[val_q][val_p][0] = -1 * iij[val_p][val_q][0]
+    iij[val_q][val_p][1] = -1 * iij[val_p][val_q][1]
   end
 
   iijMag = []
@@ -440,7 +455,7 @@ post('/analyze') do
     iijAngle[i] = []
     @num_of_buses.times do |j|
       iijMag[i][j] = (iij[i][j][0]**2 + iij[i][j][1]**2)**0.5
-      iijAngle[i][j] = Math.atan(iij[i][j][1]/(iij[i][j][0].to_f))
+      iijAngle[i][j] = Math.atan(iij[i][j][1] / iij[i][j][0].to_f)
     end
   end
 
@@ -448,9 +463,9 @@ post('/analyze') do
 
   @num_of_buses.times do |m|
     @num_of_buses.times do |n|
-      if (m != n)
-        sij[m][n][0] = (vMag[m][0]*iij[m][n][0] - vMag[m][1]*(-1*iij[m][n][1]))*100
-        sij[m][n][1] = (vMag[m][0]*(-1*iij[m][n][1]) + vMag[m][1]*(iij[m][n][0]))*100
+      if m != n
+        sij[m][n][0] = (vMag[m][0] * iij[m][n][0] - vMag[m][1] * (-1 * iij[m][n][1])) * 100
+        sij[m][n][1] = (vMag[m][0] * (-1 * iij[m][n][1]) + vMag[m][1] * (iij[m][n][0])) * 100
       end
     end
   end
@@ -459,11 +474,11 @@ post('/analyze') do
   l = 0
   @num_of_buses.times do |m|
     @num_of_buses.times do |n|
-      if n > m 
-        if ((sij[m][n][0] != 0) && (sij[m][n][1] != 0))
+      if n > m
+        if (sij[m][n][0] != 0) && (sij[m][n][1] != 0)
           @z[k] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0] unless @z[k]
           @z[k][0] = m
-          @z[k][1] = n 
+          @z[k][1] = n
           @z[k][2] = sij[m][n][0]
           @z[k][3] = sij[m][n][1]
           k += 1
@@ -471,8 +486,8 @@ post('/analyze') do
       elsif m > n
         if (sij[m][n][0] != 0) && (sij[m][n][1] != 0)
           @z[l] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0] unless @z[l]
-          @z[l][4] = m 
-          @z[l][5] = n 
+          @z[l][4] = m
+          @z[l][5] = n
           @z[l][6] = sij[m][n][0]
           @z[l][7] = sij[m][n][1]
           l += 1
@@ -494,7 +509,7 @@ post('/analyze') do
 
   lij = []
   num_of_lines.times do |i|
-    lij[i] = [0,0]
+    lij[i] = [0, 0]
   end
 
   num_of_lines.times do |m|
@@ -512,19 +527,20 @@ post('/analyze') do
   @line_loss_1 = 0
   @line_loss_2 = 0
 
-
   num_of_lines.times do |i|
-    @line_loss_1 = @line_loss_1 + @z[i][8]
-    @line_loss_2 = @line_loss_2 + @z[i][9]
+    @line_loss_1 += @z[i][8]
+    @line_loss_2 += @z[i][9]
   end
 
   si = []
 
   @num_of_buses.times do |i|
-    si[i] = [0,0]
+    si[i] = [0, 0]
     @num_of_buses.times do |k|
-      si[i][0] = si[i][0] + (vMag[i][0]*vMag[k][0]*y_bus[i][k][0] - vMag[i][0]*vMag[k][1]*y_bus[i][k][1] - (-1*vMag[i][1])*vMag[k][0]*y_bus[i][k][1] - (-1*vMag[i][1])*vMag[k][1]*y_bus[i][k][0])*100
-      si[i][1] = si[i][1] + (vMag[i][0]*vMag[k][0]*y_bus[i][k][1] + vMag[i][0]*vMag[k][1]*y_bus[i][k][0] + (-1*vMag[i][1])*vMag[k][0]*y_bus[i][k][0] - (-1*vMag[i][1])*vMag[k][1]*y_bus[i][k][1])*100
+      si[i][0] =
+        si[i][0] + (vMag[i][0] * vMag[k][0] * y_bus[i][k][0] - vMag[i][0] * vMag[k][1] * y_bus[i][k][1] - (-1 * vMag[i][1]) * vMag[k][0] * y_bus[i][k][1] - (-1 * vMag[i][1]) * vMag[k][1] * y_bus[i][k][0]) * 100
+      si[i][1] =
+        si[i][1] + (vMag[i][0] * vMag[k][0] * y_bus[i][k][1] + vMag[i][0] * vMag[k][1] * y_bus[i][k][0] + (-1 * vMag[i][1]) * vMag[k][0] * y_bus[i][k][0] - (-1 * vMag[i][1]) * vMag[k][1] * y_bus[i][k][1]) * 100
     end
   end
 
@@ -533,7 +549,7 @@ post('/analyze') do
 
   @num_of_buses.times do |i|
     @p_injection[i] = si[i][0]
-    @q_injection[i] = -1*si[i][1]
+    @q_injection[i] = -1 * si[i][1]
   end
 
   @power_generated = []
@@ -544,29 +560,28 @@ post('/analyze') do
     @reactive_generated[i] = @q_injection[i] + (@ql_data[i] * 100)
   end
 
-  @pTotal = 0 
-  @p_injection.each { |val| @pTotal = @pTotal + val }
+  @pTotal = 0
+  @p_injection.each { |val| @pTotal += val }
 
   @qTotal = 0
-  @q_injection.each { |val| @qTotal = @qTotal + val }
+  @q_injection.each { |val| @qTotal += val }
 
   @pgTotal = 0
-  @power_generated.each { |val| @pgTotal = @pgTotal  + val}
+  @power_generated.each { |val| @pgTotal += val }
 
   @qgTotal = 0
-  @reactive_generated.each { |val| @qgTotal = @qgTotal  + val}
+  @reactive_generated.each { |val| @qgTotal += val }
 
   @plTotal = 0
-  @pl_data.each { |val| @plTotal = @plTotal + val }
-
+  @pl_data.each { |val| @plTotal += val }
 
   @qlTotal = 0
-  @ql_data.each { |val| @qlTotal = @qlTotal + val }
+  @ql_data.each { |val| @qlTotal += val }
 
   # GENERATE RESULTS
-  @time = Time.now.strftime("%d-%m-%Y-%H-%M-%S")
-  CSV.open("results/PowerFlowAnalysis-NR-#{@time}.csv", "wb") do |csv|
-    csv << ["Bus Number", "Type", "V", "D", "P", "Q"]
+  @time = Time.now.strftime('%d-%m-%Y-%H-%M-%S')
+  CSV.open("results/PowerFlowAnalysis-NR-#{@time}.csv", 'wb') do |csv|
+    csv << ['Bus Number', 'Type', 'V', 'D', 'P', 'Q']
 
     @num_of_buses.times do |bus|
       new_line = [bus + 1]
@@ -578,9 +593,10 @@ post('/analyze') do
       csv << new_line
     end
     csv << []
-    csv << ["Newton Raphson Load Flow Analysis"]
-    csv << ["Bus #", "V (pu)", "Angle (degree)", "Injection MW", "Injection MVar", "Generation MW", "Generation MVar", "Load MW", "Load MVar"]
-    
+    csv << ['Newton Raphson Load Flow Analysis']
+    csv << ['Bus #', 'V (pu)', 'Angle (degree)', 'Injection MW', 'Injection MVar', 'Generation MW', 'Generation MVar',
+            'Load MW', 'Load MVar']
+
     @num_of_buses.times do |i|
       new_line = [i + 1]
       new_line.push(@v_data[i])
@@ -593,9 +609,9 @@ post('/analyze') do
       new_line.push(@ql_data[i])
       csv << new_line
     end
-    new_line = ["Total"]
-    new_line.push("")
-    new_line.push("")
+    new_line = ['Total']
+    new_line.push('')
+    new_line.push('')
     new_line.push(@pTotal)
     new_line.push(@qTotal)
     new_line.push(@pgTotal)
@@ -604,8 +620,9 @@ post('/analyze') do
     new_line.push(@qlTotal)
     csv << new_line
     csv << []
-    csv << ["Line Flows and Losses"]
-    csv << ["From Bus", "To Bus", "P MW", "Q MVar", "From Bus", "To Bus", "P MW", "Q MVar", "Line Loss MW", "Line Loss MVar"]
+    csv << ['Line Flows and Losses']
+    csv << ['From Bus', 'To Bus', 'P MW', 'Q MVar', 'From Bus', 'To Bus', 'P MW', 'Q MVar', 'Line Loss MW',
+            'Line Loss MVar']
 
     @z.each do |row|
       new_line = [row[0]]
@@ -621,14 +638,14 @@ post('/analyze') do
       csv << new_line
     end
 
-    new_line = ["Total Loss"]
-    new_line.push("")
-    new_line.push("")
-    new_line.push("")
-    new_line.push("")
-    new_line.push("")
-    new_line.push("")
-    new_line.push("")
+    new_line = ['Total Loss']
+    new_line.push('')
+    new_line.push('')
+    new_line.push('')
+    new_line.push('')
+    new_line.push('')
+    new_line.push('')
+    new_line.push('')
     new_line.push(@line_loss_1)
     new_line.push(@line_loss_2)
     csv << new_line
@@ -636,5 +653,5 @@ post('/analyze') do
 
   erb :result
 
-  #send_file "PowerFlowAnalysis-NR-#{time}.csv", :filename => "PowerFlowAnalysis-NR-#{time}.csv"
+  # send_file "PowerFlowAnalysis-NR-#{time}.csv", :filename => "PowerFlowAnalysis-NR-#{time}.csv"
 end
