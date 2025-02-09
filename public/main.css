@@ -1,40 +1,80 @@
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f4f4f4;
+  color: #333;
+  margin: 0;
+  padding: 0;
+}
+#header {
+  background: linear-gradient(90deg, #003366, #0055aa);
+  color: white;
+  text-align: center;
+  padding: 20px;
+}
+#header h1 {
+  margin: 0;
+}
+#header p {
+  margin: 5px 0;
+}
 #options {
-  border-color: black;
-  border-width: 2px;
-  border-style: solid;
-  background-color: #044E96;
-  color: white;
-  font-size: 20px;
-  height: 40px;
+  margin-top: 15px;
 }
-
+#options table {
+  width: 100%;
+}
 #options td {
-  padding: 7px 28px 3px 3px;
+  text-align: center;
+  padding: 10px;
 }
-
 .header-link {
-  padding: 5px 5px 5px 5px;
+  color: yellow;
   text-decoration: none;
+  font-weight: bold;
 }
-
-#options a:link {
+.header-link:hover {
+  text-decoration: underline;
+}
+.container {
+  width: 60%;
+  margin: 20px auto;
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+h1, h2 {
+  color: #003366;
+}
+input[type="file"], input[type="submit"] {
+  display: block;
+  margin: 10px 0;
+  padding: 10px;
+  width: 100%;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+input[type="submit"] {
+  background: #0055aa;
   color: white;
+  cursor: pointer;
+  font-size: 16px;
+}
+input[type="submit"]:hover {
+  background: #003366;
 }
 
-#options a:visited {
-  color: white;
+img {
+  width: 100%;
+  max-width: 600px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
-#options a:hover {
-  color: white;
-  background-color: #B4B4B4;
+.check {
+  max-width: 20px;
 }
 
-body{
-  font-family: sans-serif;
-}
-
-td.sch, tr.sch {
-  padding:0;
-  font-size:0;
+#schematic img {
+  max-width: 150px;
 }

@@ -1,41 +1,47 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
-  <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
-    <title>User Guide</title>
-    <link type="text/css" rel="stylesheet" href="/main.css" />
-  </head>
-  <body>
-  <div id="header">
-    <h1>Online Power Flow Assessment Tool</h1>
-    <p>Capstone Design Project</p>
-    <p>&copy 2018 - 2019 Darian Brandolino, Adriano Mazzucco & Jonathan Psaila
-    </p>
-    <div id="options">
-      <table>
-        <tr>
-          <td><a class="header-link" href="/">Home</a></td>
-          <td><a class="header-link" href="/manual">Manual Input</a></td>
-          <td><a class="header-link" href="/info">Technical Info</a></td>
-          <td><a class="header-link" href="/about">About</a></td>
-        </tr>
-      </table>
-    </div>
-    <h1>User Guide v1.0</h1>
-    <p>The Online Power Flow Assessment Tool was designed as a fast, lightweight mobile-ready tool that can perform detailed computation of power flow for an unlimited number of busses in a given 3-phase network.
-    </p>
-    <p>The tool supports excel file upload for bus and line data. Examples can be downloaded by clicking <a href="/download/bus">HERE</a> for bus data, and <a href="/download/line">HERE</a> for line data.</p>
-    <h1>How to Run</h1>
-    <ol>
-      <li>Populate your data into a csv file following the format provided in the example csvs (Can be downloaded above)</li>
-      <li>Navigate to the <a href="/">homepage</a> and upload your respective bus and line data csvs and hit submit.</li>
-      <li>The tool will scan your data, build a schematic representation and allow you to perform a final check to ensure correctness before submitting</li> 
-      <li>Then click RUN!</li>
-      <li>The results will be displayed to you and can be convieniently downloaded in csv format</li>
-    </ol>
-    <h1>How it works</h1>
-    <p>The tool works by analyzing your input data and first calculating the voltage, angle, real and reactive power values using the iterative Newton Rahpson method. The calculated parameters are then used to calculate the line flows and losses for the system.</p>
-  </div>
-  </body>
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+      <title>User Guide</title>
+      <link type="text/css" rel="stylesheet" href="/main.css" />
+   </head>
+   <body>
+      <div id="header">
+         <h1>Online Power Flow Assessment Tool</h1>
+         <p>Capstone Design Project</p>
+         <p>&copy; 2018 - 2019 Darian Brandolino, Adriano Mazzucco & Jonathan Psaila</p>
+         <div id="options">
+            <table>
+               <tr>
+                  <td><a class="header-link" href="/">Home</a></td>
+                  <td><a class="header-link" href="/manual">Manual Input</a></td>
+                  <td><a class="header-link" href="/info">Technical Info</a></td>
+                  <td><a class="header-link" href="/about">About</a></td>
+               </tr>
+            </table>
+         </div>
+      </div>
+      <div class="container">
+         <section>
+            <h1>User Guide v1.0</h1>
+            <p>The Online Power Flow Assessment Tool was designed as a fast, lightweight, mobile-ready tool that can perform detailed computation of power flow for an unlimited number of buses in a given 3-phase network.</p>
+            <p>The tool supports Excel file uploads for bus and line data. Examples can be downloaded by clicking <a href="/download/bus">HERE</a> for bus data and <a href="/download/line">HERE</a> for line data.</p>
+         </section>
+         <section>
+            <h1>How to Run</h1>
+            <ol>
+               <li>Populate your data into a CSV file following the format provided in the example CSVs (download above).</li>
+               <li>Navigate to the <a href="/">homepage</a>, upload your bus and line data CSVs, and hit submit.</li>
+               <li>The tool will scan your data, build a schematic representation, and allow you to perform a final check before submitting.</li>
+               <li>Then click RUN!</li>
+               <li>The results will be displayed and can be conveniently downloaded in CSV format.</li>
+            </ol>
+         </section>
+         <section>
+            <h1>How It Works</h1>
+            <p>The tool analyzes your input data and calculates voltage, angle, real and reactive power values using the iterative Newton-Raphson method. These calculated parameters are then used to determine line flows and losses within the system.</p>
+         </section>
+      </div>
+   </body>
 </html>
