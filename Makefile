@@ -16,5 +16,5 @@ determine-app-version:
 	ruby scripts/determine_app_version.rb
 
 .PHONY: generate-changelog
-determine-app-version:
+generate-changelog:
 	ruby scripts/generate_changelog.rb
