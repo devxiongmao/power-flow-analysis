@@ -10,3 +10,7 @@ dev:
 .PHONY: rubocop
 rubocop:
 	rubocop -A
+
+.PHONY: determine-app-version
+determine-app-version:
+	ruby scripts/determine_app_version.rb
