@@ -1,130 +1,179 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
-  <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
-    <title>Online Power Flow Analysis Tool</title>
-    <link type="text/css" rel="stylesheet" href="/main.css" />
-  </head>
-  <body>
-    <div id="header">
-      <h1>Online Power Flow Assessment Tool</h1>
-      <p>Capstone Design Project</p>
-      <p>&copy 2018 - 2019 Darian Brandolino, Adriano Mazzucco & Jonathan Psaila
-      </p>
-      <div id="options">
-        <table>
-          <tr>
-            <td><a class="header-link" href="/">Home</a></td>
-            <td><a class="header-link" href="/manual">Manual Input</a></td>
-            <td><a class="header-link" href="/info">Technical Info</a></td>
-            <td><a class="header-link" href="/about">About</a></td>
-          </tr>
-        </table>
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+      <title>Online Power Flow Analysis Tool</title>
+      <link type="text/css" rel="stylesheet" href="/main.css" />
+      <style>
+         #result-tables h1 {
+            text-align: center;
+            margin-top: 30px;
+         }
+         #result-tables table {
+            width: 80%;
+            margin: 20px auto;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+         }
+         #result-tables th, #result-tables td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: center;
+         }
+         #result-tables th {
+            background-color: #0073e6;
+            color: white;
+            text-transform: uppercase;
+         }
+         #result-tables tr:nth-child(even) {
+            background-color: #f9f9f9;
+         }
+         #result-tables tr:hover {
+            background-color: #f1f1f1;
+         }
+         p {
+            font-size: 18px;
+            margin-top: 20px;
+         }
+         a.download-link {
+            display: inline-block;
+            padding: 10px 15px;
+            background: #0073e6;
+            color: white;
+            font-weight: bold;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: 0.3s ease-in-out;
+         }
+         a.download-link:hover {
+            background: #005bb5;
+         }
+      </style>
+   </head>
+   <body>
+      <div id="header">
+         <h1>Online Power Flow Assessment Tool</h1>
+         <p>Capstone Design Project</p>
+         <p>&copy; 2018 - 2019 Darian Brandolino, Adriano Mazzucco & Jonathan Psaila</p>
+         <div id="options">
+            <table>
+               <tr>
+                  <td><a class="header-link" href="/">Home</a></td>
+                  <td><a class="header-link" href="/manual">Manual Input</a></td>
+                  <td><a class="header-link" href="/info">Technical Info</a></td>
+                  <td><a class="header-link" href="/about">About</a></td>
+               </tr>
+            </table>
+         </div>
       </div>
-    </div>
-    <div>
-      <h1>Results</h1>
-      <table style="border-spacing: 15px;">
-        <tr>
-          <td><b>Number</b></td>
-          <td><b>Bus Type</b></td>
-          <td><b>Voltage</b></td>
-          <td><b>Angle</b></td>
-          <td><b>Real Power</b></td>
-          <td><b>Reactive Power</b></td>
-        </tr>
-        <% @num_of_buses.times do |i| %>
-          <tr>
-            <td><%= i + 1%></td>
-            <td><%= @types[i]%></td>
-            <td><%= @v_data[i]%></td>
-            <td><%= @d_data[i]%></td>
-            <td><%= @p_data[i]%></td>
-            <td><%= @q_data[i]%></td>
-          </tr>
-        <% end %>
-      </table>
-      <p>Download Results in CSV format by clicking <a href="/download/<%=@time%>">HERE</a></p>
-      <h1>Newton Raphson Loadflow Analysis</h1>
-      <table style="border-spacing: 15px;">
-        <tr>
-          <td><b>Bus #</b></td>
-          <td><b>V (pu)</b></td>
-          <td><b>Angle (degree)</b></td>
-          <td><b>Injection MW</b></td>
-          <td><b>Injection MVar</b></td>
-          <td><b>Generation MW</b></td>
-          <td><b>Generation MVar</b></td>
-          <td><b>Load MW</b></td>
-          <td><b>Load MVar</b></td>
-        </tr>
-        <% @num_of_buses.times do |i| %>
-        <tr>
-          <td><%= i + 1%></td>
-          <td><%= @v_data[i]%></td>
-          <td><%= @del_degree[i]%></td>
-          <td><%= @p_injection[i]%></td>
-          <td><%= @q_injection[i]%></td>
-          <td><%= @power_generated[i]%></td>
-          <td><%= @reactive_generated[i]%></td>
-          <td><%= @pl_data[i]%></td>
-          <td><%= @ql_data[i]%></td>
-        </tr>
-        <% end %>
-        <tr>
-          <td><b>Total</b></td>
-          <td></td>
-          <td></td>
-          <td><%=@pTotal%></td>
-          <td><%=@qTotal%></td>
-          <td><%=@pgTotal%></td>
-          <td><%=@qgTotal%></td>
-          <td><%=@plTotal%></td>
-          <td><%=@qlTotal%></td>
-        </tr>
-      </table>
-      <h1>Line Flow and Losses</h1>
-      <table style="border-spacing: 15px;">
-        <tr>
-          <td><b>From Bus</b></td>
-          <td><b>To Bus</b></td>
-          <td><b>P MW</b></td>
-          <td><b>Q MVar</b></td>
-          <td><b>From Bus</b></td>
-          <td><b>To Bus</b></td>
-          <td><b>P MW</b></td>
-          <td><b>Q MVar</b></td>
-          <td><b>Line Loss MW</b></td>
-          <td><b>Line Loss MVar</b></td>
-        </tr>
-        <% @z.each do |row| %>
-        <tr>
-          <td><%=row[0]%></td>
-          <td><%=row[1]%></td>
-          <td><%=row[2]%></td>
-          <td><%=row[3]%></td>
-          <td><%=row[1]%></td>
-          <td><%=row[0]%></td>
-          <td><%=row[6]%></td>
-          <td><%=row[7]%></td>
-          <td><%=row[8]%></td>
-          <td><%=row[9]%></td>
-        </tr>
-        <% end %>
-        <tr>
-          <td><b>Total Loss</b></td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td><%=@line_loss_1%></td>
-          <td><%=@line_loss_2%></td>
-        </tr>
-      </table>    
-    </div>
-  </body>
+      <p>Download Results in CSV format by clicking <a class="download-link" href="/download/<%=@time%>">HERE</a></p>
+      <div id="result-tables">
+         <h1>Results</h1>
+         <table>
+            <tr>
+               <th>Number</th>
+               <th>Bus Type</th>
+               <th>Voltage</th>
+               <th>Angle</th>
+               <th>Real Power</th>
+               <th>Reactive Power</th>
+            </tr>
+            <% @num_of_buses.times do |i| %>
+            <tr>
+               <td><%= i + 1%></td>
+               <td><%= @types[i]%></td>
+               <td><%= @v_data[i].round(3)%></td>
+               <td><%= @d_data[i].round(3)%></td>
+               <td><%= @p_data[i].round(3)%></td>
+               <td><%= @q_data[i].round(3)%></td>
+            </tr>
+            <% end %>
+         </table>
+         
+         <h1>Newton Raphson Loadflow Analysis</h1>
+         <table>
+            <tr>
+               <th>Bus #</th>
+               <th>V (pu)</th>
+               <th>Angle (degree)</th>
+               <th>Injection MW</th>
+               <th>Injection MVar</th>
+               <th>Generation MW</th>
+               <th>Generation MVar</th>
+               <th>Load MW</th>
+               <th>Load MVar</th>
+            </tr>
+            <% @num_of_buses.times do |i| %>
+            <tr>
+               <td><%= i + 1%></td>
+               <td><%= @v_data[i].round(3)%></td>
+               <td><%= @del_degree[i].round(3)%></td>
+               <td><%= @p_injection[i].round(3)%></td>
+               <td><%= @q_injection[i].round(3)%></td>
+               <td><%= @power_generated[i].round(3)%></td>
+               <td><%= @reactive_generated[i].round(3)%></td>
+               <td><%= @pl_data[i].round(3)%></td>
+               <td><%= @ql_data[i].round(3)%></td>
+            </tr>
+            <% end %>
+            <tr>
+               <th>Total</th>
+               <td></td>
+               <td></td>
+               <td><%=@pTotal.round(3)%></td>
+               <td><%=@qTotal.round(3)%></td>
+               <td><%=@pgTotal.round(3)%></td>
+               <td><%=@qgTotal.round(3)%></td>
+               <td><%=@plTotal.round(3)%></td>
+               <td><%=@qlTotal.round(3)%></td>
+            </tr>
+         </table>
+
+         <h1>Line Flow and Losses</h1>
+         <table>
+            <tr>
+               <th>From Bus</th>
+               <th>To Bus</th>
+               <th>P MW</th>
+               <th>Q MVar</th>
+               <th>From Bus</th>
+               <th>To Bus</th>
+               <th>P MW</th>
+               <th>Q MVar</th>
+               <th>Line Loss MW</th>
+               <th>Line Loss MVar</th>
+            </tr>
+            <% @z.each do |row| %>
+            <tr>
+               <td><%=row[0].round(3)%></td>
+               <td><%=row[1].round(3)%></td>
+               <td><%=row[2].round(3)%></td>
+               <td><%=row[3].round(3)%></td>
+               <td><%=row[1].round(3)%></td>
+               <td><%=row[0].round(3)%></td>
+               <td><%=row[6].round(3)%></td>
+               <td><%=row[7].round(3)%></td>
+               <td><%=row[8].round(3)%></td>
+               <td><%=row[9].round(3)%></td>
+            </tr>
+            <% end %>
+            <tr>
+               <th>Total Loss</th>
+               <td></td>
+               <td></td>
+               <td></td>
+               <td></td>
+               <td></td>
+               <td></td>
+               <td></td>
+               <td><%=@line_loss_1.round(3)%></td>
+               <td><%=@line_loss_2.round(3)%></td>
+            </tr>
+         </table>
+      </div>
+   </body>
 </html>

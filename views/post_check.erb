@@ -1,263 +1,253 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
-  <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
-    <title>Online Power Flow Analysis Tool</title>
-    <link type="text/css" rel="stylesheet" href="/main.css" />
-    <script src="/add_line.js" language="Javascript" type="text/javascript"></script>
-    <script src="/populate_values.js" language="Javascript" type="text/javascript"></script>
-    <script src="/change_bus_type.js" language="Javascript" type="text/javascript"></script>
-    <script src="/buildLines.js" language="Javascript" type="text/javascript"></script>
-    <script src="/buildSchematicFromCSV.js" language="Javascript" type="text/javascript"></script>
-    <script src="/Validation.js" language="Javascript" type="text/javascript"></script>
-  </head>
-  <%num_of_buses = @all_bus_lines.size - 1%>
-  <%num_of_lines = @all_line_lines.size - 1%>
-  <body onload="buildSchematicFromCSV(<%=num_of_buses%>, <%=num_of_lines%>);">
-    <div id="header">
-      <h1>Online Power Flow Assessment Tool</h1>
-      <p>Capstone Design Project</p>
-      <p>&copy 2018 - 2019 Darian Brandolino, Adriano Mazzucco & Jonathan Psaila
-      </p>
-      <div id="options">
-        <table>
-          <tr>
-            <td><a class="header-link" href="/">Home</a></td>
-            <td><a class="header-link" href="/manual">Manual Input</a></td>
-            <td><a class="header-link" href="/info">Technical Info</a></td>
-            <td><a class="header-link" href="/about">About</a></td>
-          </tr>
-        </table>
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+      <title>Online Power Flow Analysis Tool</title>
+      <link type="text/css" rel="stylesheet" href="/main.css" />
+      <script src="/add_line.js" language="Javascript" type="text/javascript"></script>
+      <script src="/populate_values.js" language="Javascript" type="text/javascript"></script>
+      <script src="/change_bus_type.js" language="Javascript" type="text/javascript"></script>
+      <script src="/buildLines.js" language="Javascript" type="text/javascript"></script>
+      <script src="/buildSchematicFromCSV.js" language="Javascript" type="text/javascript"></script>
+      <script src="/Validation.js" language="Javascript" type="text/javascript"></script>
+   </head>
+   <%num_of_buses = @all_bus_lines.size - 1%>
+   <%num_of_lines = @all_line_lines.size - 1%>
+   <body onload="buildSchematicFromCSV(<%=num_of_buses%>, <%=num_of_lines%>);">
+      <div id="header">
+         <h1>Online Power Flow Assessment Tool</h1>
+         <p>Capstone Design Project</p>
+         <p>&copy; 2018 - 2019 Darian Brandolino, Adriano Mazzucco & Jonathan Psaila</p>
+         <div id="options">
+            <table>
+               <tr>
+                  <td><a class="header-link" href="/">Home</a></td>
+                  <td><a class="header-link" href="/manual">Manual Input</a></td>
+                  <td><a class="header-link" href="/info">Technical Info</a></td>
+                  <td><a class="header-link" href="/about">About</a></td>
+               </tr>
+            </table>
+         </div>
       </div>
-    </div>
-    <div>
-      <h1>Manual Data Entry</h1>
-      <form method="post" action="/analyze">
-        <h2>1. Enter bus data:</h2>
-        <table>
-          <tr>
-            <th>Bus #</th>
-            <th>Type</th>
-            <th>Voltage</th>
-            <th>Angle</th>
-            <th>PGi</th>
-            <th>QGi</th>
-            <th>PLi</th>
-            <th>QLi</th>
-            <th>Qmin</th>
-            <th>Qmax</th>
-          </tr>
-          <tbody id="bus-table">
-            <% num = 0%>
-            <% @bus_data.each_with_index do |value, i| %>
-              <% if i % 10 == 0 %>
-                <% num = value%>
-                <tr id="<%= value %>">
-                  <td align="center" class="bus-num"><%= value %></td>
-              <% end %>
-
-              <% if i % 10 == 1 %>
-                <td>
-                  <select class="bus-select" name="type-<%= num %>" id="bus-selector-<%= num %>" onchange="changeBusType('bus-selector-<%= num %>', 'bus-img-<%= num %>');">
-                    <% if value.include?('Slack') %>
-                      <option selected value="slack">Slack Bus</option>
-                      <option value="generator">Generator Bus</option>
-                      <option value="load">Load Bus</option>
-                    <% end %>
-                    <% if value.include?('Generator') %>
-                      <option value="slack">Slack Bus</option>
-                      <option selected value="generator">Generator Bus</option>
-                      <option value="load">Load Bus</option>
-                    <% end %>
-                    <% if value.include?('Load') %>
-                      <option value="slack">Slack Bus</option>
-                      <option value="generator">Generator Bus</option>
-                      <option selected value="load">Load Bus</option>
-                    <% end %>
-                  </select>
-                </td>
-              <% end %>
-
-              <% if i % 10 == 2 %>
-                <% temp_data = num.to_i * 8 - 7 %>
-                <td><input class="bus-voltage" value="<%= value %>" type="text"  id="entry-<%= temp_data%>" oninput="populateValues('entry-<%=temp_data%>', 'schem-<%=temp_data%>');" name="v<%= num %>"></td>
-              <% end %>
-
-              <% if i % 10 == 3 %>
-                <% temp_data = num.to_i * 8 - 6 %>
-                <td><input class="bus-angle" value="<%= value %>" type="text" id="entry-<%=temp_data%>" oninput="populateValues('entry-<%=temp_data%>', 'schem-<%= temp_data%>');" name="d<%= num %>"></td>
-              <% end %>
-
-              <% if i % 10 == 4 %>
-                <% temp_data = num.to_i * 8 - 5 %>
-                <td><input class="bus-pgi" value="<%= value %>" type="text" id="entry-<%= temp_data %>" oninput="populateValues('entry-<%= temp_data %>', 'schem-<%= temp_data %>');" name="pg<%= num %>"></td>
-              <% end %>
-
-              <% if i % 10 == 5 %>
-                <% temp_data = num.to_i * 8 - 4 %>
-                <td><input class="bus-qgi" value="<%= value %>" type="text" id="entry-<%= temp_data %>" oninput="populateValues('entry-<%= temp_data %>', 'schem-<%= temp_data %>');" name="qg<%= num %>"></td>
-              <% end %>
-
-              <% if i % 10 == 6 %>
-                <% temp_data = num.to_i * 8 - 3 %>
-                <td><input class="bus-pli" value="<%= value %>" type="text" id="entry-<%= temp_data %>" oninput="populateValues('entry-<%= temp_data %>', 'schem-<%= temp_data %>');" name="pl<%= num %>"></td>
-              <% end %>
-
-              <% if i % 10 == 7 %>
-                <% temp_data = num.to_i * 8 - 2 %>
-                <td><input class="bus-qli" value="<%= value %>" type="text" id="entry-<%= temp_data %>" oninput="populateValues('entry-<%= temp_data %>', 'schem-<%= temp_data %>');" name="ql<%= num %>"></td>
-              <% end %>
-
-              <% if i % 10 == 8 %>
-                <% temp_data = num.to_i * 8 - 1 %>
-                <td><input class="bus-qmin" value="<%= value %>" type="text" id="entry-<%= temp_data %>" oninput="populateValues('entry-<%= temp_data %>', 'schem-<%= temp_data %>');" name="qmin<%= num %>"></td>
-              <% end %>
-
-              <% if i % 10 == 9 %>
-                <% temp_data = num.to_i * 8%>
-                <td><input class="bus-qmax" value="<%= value %>" type="text" id="entry-<%= temp_data%>" oninput="populateValues('entry-<%= temp_data%>', 'schem-<%= temp_data%>');"name="qmax<%= num %>"></td>
-                <td class="check" id="line-<%= num.to_i %>"><img width="20px" src="redx.png"></img></td>
-              </tr>
-              <% end %>
-            <% end %>
-          </tbody>
-        </table>
-        <p></p>
-        <input type="button" value="Add Bus" onClick="addLine('bus');">
-        <h2>2. Enter line data:</h2>
-        <table>
-          <tr>
-            <th>Line #</th>
-            <th>From Bus</th>
-            <th>To Bus</th>
-            <th>R</th>
-            <th>X</th>
-            <th>B/2</th>
-            <th>X'mer</th>
-          </tr>
-          <tbody id="line-table">
-            <% line_number = 1%>
-            <% @line_data.each_with_index do |value, i| %>
-              <% next unless i % 6 == 0 %>
-              <tr id="line-<%=line_number%>">
-                <td align="center" class="line-num"><%=line_number%></td>
-                <% temp_num = line_number.to_i * 6 - 5%>
-                <td><input type="text" value="<%=value%>" name="from-<%=line_number%>" id="line-entry-<%= temp_num%>" oninput="buildLines(<%=line_number%>);"></td>
-                <% temp_num = line_number.to_i * 6 - 4%>
-                <td><input type="text" value="<%=@line_data[i + 1]%>" name="to-<%=line_number%>" id="line-entry-<%= temp_num%>" oninput="buildLines(<%=line_number%>);"></td>
-                <% temp_num = line_number.to_i * 6 - 3%>
-                <td><input type="text" value="<%=@line_data[i + 2]%>" name="line-resistance-<%=line_number%>" id="line-entry-<%= temp_num%>" oninput="buildLines(<%=line_number%>);"></td>
-                <% temp_num = line_number.to_i * 6 - 2%>
-                <td><input type="text" value="<%=@line_data[i + 3]%>" name="line-reactance-<%=line_number%>" id="line-entry-<%= temp_num%>" oninput="buildLines(<%=line_number%>);"></td>
-                <% temp_num = line_number.to_i * 6 - 1%>
-                <td><input type="text" value="<%=@line_data[i + 4]%>" name="ground-admittance-<%=line_number%>" id="line-entry-<%= temp_num%>" oninput="buildLines(<%=line_number%>);"></td>
-                <% temp_num = line_number.to_i * 6%>
-                <td><input type="text" value="<%=@line_data[i + 5]%>" name="tap-setting-<%=line_number%>" id="line-entry-<%= temp_num%>" oninput="buildLines(<%=line_number%>);"></td>
-              </tr>
-              <% line_number += 1%>
-            <% end %>
-          </tbody>
-        </table>
-        <p></p>
-        <input type="button" value="Add Line" onClick="addLine('line');">
-        <h2>3. Click submit to begin processing:</h2>
-        <td><input type="submit"></td>
-      </form>
-      <h2>Dynamic Schematic</h2>
-      <table style="border-collapse: collapse" id="schematic">
-        <tr>
-          <% @all_bus_lines.each_with_index do |value, i| %>
-            <% next if i == 0 %>
-            <% temp_num = i * 8 - 7%>
-          <td align="center" id="schem-<%=temp_num%>">
-            V:  <%=@bus_data[10 * i - 8]%>
-          </td>
-          <% end %>
-        </tr>
-        <tr>
-          <% @all_bus_lines.each_with_index do |value, i| %>
-            <% next if i == 0 %>
-            <% temp_num = i * 8 - 6%>
-          <td align="center" id="schem-<%=temp_num%>">
-            A:  <%=@bus_data[10 * i - 7]%>
-          </td>
-          <% end %>
-        </tr>
-        <tr>
-          <% @all_bus_lines.each_with_index do |value, i| %>
-            <% next if i == 0 %>
-            <% temp_num = i * 8 - 5%>
-          <td align="center" id="schem-<%=temp_num%>">
-            PGi:  <%=@bus_data[10 * i - 6]%>
-          </td>
-          <% end %>
-        </tr>
-        <tr>
-          <% @all_bus_lines.each_with_index do |value, i| %>
-            <% next if i == 0 %>
-            <% temp_num = i * 8 - 4%>
-          <td align="center" id="schem-<%=temp_num%>">
-            QGi:  <%=@bus_data[10 * i - 5]%>
-          </td>
-          <% end %>
-        </tr>
-        <tr>
-          <% @all_bus_lines.each_with_index do |value, i| %>
-            <% next if i == 0 %>
-            <% temp_num = i * 8 - 3%>
-          <td align="center" id="schem-<%=temp_num%>">
-            PLi:  <%=@bus_data[10 * i - 4]%>
-          </td>
-          <% end %>
-        </tr>
-        <tr>
-          <% @all_bus_lines.each_with_index do |value, i| %>
-            <% next if i == 0 %>
-            <% temp_num = i * 8 - 2%>
-          <td align="center" id="schem-<%=temp_num%>">
-            PLi:  <%=@bus_data[10 * i - 3]%>
-          </td>
-          <% end %>
-        </tr>
-        <tr>
-          <% @all_bus_lines.each_with_index do |value, i| %>
-            <% next if i == 0 %>
-            <% temp_num = i * 8 - 1%>
-          <td align="center" id="schem-<%=temp_num%>">
-            QMin:  <%=@bus_data[10 * i - 2]%>
-          </td>
-          <% end %>
-        </tr>
-        <tr>
-          <% @all_bus_lines.each_with_index do |value, i| %>
-            <% next if i == 0 %>
-            <% temp_num = i * 8%>
-          <td align="center" id="schem-<%=temp_num%>">
-            QMax:  <%=@bus_data[10 * i - 1]%>
-          </td>
-          <% end %>
-        </tr>
-        <tr class="sch">
-          <% @all_bus_lines.each_with_index do |value, i| %>
+      <div>
+         <h1>Manual Data Entry</h1>
+         <form method="post" action="/analyze">
+            <h2>1. Enter bus data:</h2>
+            <table>
+               <tr>
+                  <th>Bus #</th>
+                  <th>Type</th>
+                  <th>Voltage</th>
+                  <th>Angle</th>
+                  <th>PGi</th>
+                  <th>QGi</th>
+                  <th>PLi</th>
+                  <th>QLi</th>
+                  <th>Qmin</th>
+                  <th>Qmax</th>
+               </tr>
+               <tbody id="bus-table">
+                  <% num = 0%>
+                  <% @bus_data.each_with_index do |value, i| %>
+                  <% if i % 10 == 0 %>
+                  <% num = value%>
+                  <tr id="<%= value %>">
+                     <td align="center" class="bus-num"><%= value %></td>
+                     <% end %>
+                     <% if i % 10 == 1 %>
+                     <td>
+                        <select class="bus-select" name="type-<%= num %>" id="bus-selector-<%= num %>" onchange="changeBusType('bus-selector-<%= num %>', 'bus-img-<%= num %>');">
+                           <% if value.include?('Slack') %>
+                           <option selected value="slack">Slack Bus</option>
+                           <option value="generator">Generator Bus</option>
+                           <option value="load">Load Bus</option>
+                           <% end %>
+                           <% if value.include?('Generator') %>
+                           <option value="slack">Slack Bus</option>
+                           <option selected value="generator">Generator Bus</option>
+                           <option value="load">Load Bus</option>
+                           <% end %>
+                           <% if value.include?('Load') %>
+                           <option value="slack">Slack Bus</option>
+                           <option value="generator">Generator Bus</option>
+                           <option selected value="load">Load Bus</option>
+                           <% end %>
+                        </select>
+                     </td>
+                     <% end %>
+                     <% if i % 10 == 2 %>
+                     <% temp_data = num.to_i * 8 - 7 %>
+                     <td><input class="bus-voltage" value="<%= value %>" type="text"  id="entry-<%= temp_data%>" oninput="populateValues('entry-<%=temp_data%>', 'schem-<%=temp_data%>');" name="v<%= num %>"></td>
+                     <% end %>
+                     <% if i % 10 == 3 %>
+                     <% temp_data = num.to_i * 8 - 6 %>
+                     <td><input class="bus-angle" value="<%= value %>" type="text" id="entry-<%=temp_data%>" oninput="populateValues('entry-<%=temp_data%>', 'schem-<%= temp_data%>');" name="d<%= num %>"></td>
+                     <% end %>
+                     <% if i % 10 == 4 %>
+                     <% temp_data = num.to_i * 8 - 5 %>
+                     <td><input class="bus-pgi" value="<%= value %>" type="text" id="entry-<%= temp_data %>" oninput="populateValues('entry-<%= temp_data %>', 'schem-<%= temp_data %>');" name="pg<%= num %>"></td>
+                     <% end %>
+                     <% if i % 10 == 5 %>
+                     <% temp_data = num.to_i * 8 - 4 %>
+                     <td><input class="bus-qgi" value="<%= value %>" type="text" id="entry-<%= temp_data %>" oninput="populateValues('entry-<%= temp_data %>', 'schem-<%= temp_data %>');" name="qg<%= num %>"></td>
+                     <% end %>
+                     <% if i % 10 == 6 %>
+                     <% temp_data = num.to_i * 8 - 3 %>
+                     <td><input class="bus-pli" value="<%= value %>" type="text" id="entry-<%= temp_data %>" oninput="populateValues('entry-<%= temp_data %>', 'schem-<%= temp_data %>');" name="pl<%= num %>"></td>
+                     <% end %>
+                     <% if i % 10 == 7 %>
+                     <% temp_data = num.to_i * 8 - 2 %>
+                     <td><input class="bus-qli" value="<%= value %>" type="text" id="entry-<%= temp_data %>" oninput="populateValues('entry-<%= temp_data %>', 'schem-<%= temp_data %>');" name="ql<%= num %>"></td>
+                     <% end %>
+                     <% if i % 10 == 8 %>
+                     <% temp_data = num.to_i * 8 - 1 %>
+                     <td><input class="bus-qmin" value="<%= value %>" type="text" id="entry-<%= temp_data %>" oninput="populateValues('entry-<%= temp_data %>', 'schem-<%= temp_data %>');" name="qmin<%= num %>"></td>
+                     <% end %>
+                     <% if i % 10 == 9 %>
+                     <% temp_data = num.to_i * 8%>
+                     <td><input class="bus-qmax" value="<%= value %>" type="text" id="entry-<%= temp_data%>" oninput="populateValues('entry-<%= temp_data%>', 'schem-<%= temp_data%>');"name="qmax<%= num %>"></td>
+                     <td class="check" id="line-<%= num.to_i %>"><img width="20px" src="redx.png"></img></td>
+                  </tr>
+                  <% end %>
+                  <% end %>
+               </tbody>
+            </table>
+            <p></p>
+            <input type="button" value="Add Bus" onClick="addLine('bus');">
+            <h2>2. Enter line data:</h2>
+            <table>
+               <tr>
+                  <th>Line #</th>
+                  <th>From Bus</th>
+                  <th>To Bus</th>
+                  <th>R</th>
+                  <th>X</th>
+                  <th>B/2</th>
+                  <th>X'mer</th>
+               </tr>
+               <tbody id="line-table">
+                  <% line_number = 1%>
+                  <% @line_data.each_with_index do |value, i| %>
+                  <% next unless i % 6 == 0 %>
+                  <tr id="line-<%=line_number%>">
+                     <td align="center" class="line-num"><%=line_number%></td>
+                     <% temp_num = line_number.to_i * 6 - 5%>
+                     <td><input type="text" value="<%=value%>" name="from-<%=line_number%>" id="line-entry-<%= temp_num%>" oninput="buildLines(<%=line_number%>);"></td>
+                     <% temp_num = line_number.to_i * 6 - 4%>
+                     <td><input type="text" value="<%=@line_data[i + 1]%>" name="to-<%=line_number%>" id="line-entry-<%= temp_num%>" oninput="buildLines(<%=line_number%>);"></td>
+                     <% temp_num = line_number.to_i * 6 - 3%>
+                     <td><input type="text" value="<%=@line_data[i + 2]%>" name="line-resistance-<%=line_number%>" id="line-entry-<%= temp_num%>" oninput="buildLines(<%=line_number%>);"></td>
+                     <% temp_num = line_number.to_i * 6 - 2%>
+                     <td><input type="text" value="<%=@line_data[i + 3]%>" name="line-reactance-<%=line_number%>" id="line-entry-<%= temp_num%>" oninput="buildLines(<%=line_number%>);"></td>
+                     <% temp_num = line_number.to_i * 6 - 1%>
+                     <td><input type="text" value="<%=@line_data[i + 4]%>" name="ground-admittance-<%=line_number%>" id="line-entry-<%= temp_num%>" oninput="buildLines(<%=line_number%>);"></td>
+                     <% temp_num = line_number.to_i * 6%>
+                     <td><input type="text" value="<%=@line_data[i + 5]%>" name="tap-setting-<%=line_number%>" id="line-entry-<%= temp_num%>" oninput="buildLines(<%=line_number%>);"></td>
+                  </tr>
+                  <% line_number += 1%>
+                  <% end %>
+               </tbody>
+            </table>
+            <p></p>
+            <input type="button" value="Add Line" onClick="addLine('line');">
+            <h2>3. Click submit to begin processing:</h2>
+            <td><input type="submit"></td>
+         </form>
+         <h2>Dynamic Schematic</h2>
+         <table style="border-collapse: collapse" id="schematic">
+            <tr>
+               <% @all_bus_lines.each_with_index do |value, i| %>
+               <% next if i == 0 %>
+               <% temp_num = i * 8 - 7%>
+               <td align="center" id="schem-<%=temp_num%>">
+                  V:  <%=@bus_data[10 * i - 8]%>
+               </td>
+               <% end %>
+            </tr>
+            <tr>
+               <% @all_bus_lines.each_with_index do |value, i| %>
+               <% next if i == 0 %>
+               <% temp_num = i * 8 - 6%>
+               <td align="center" id="schem-<%=temp_num%>">
+                  A:  <%=@bus_data[10 * i - 7]%>
+               </td>
+               <% end %>
+            </tr>
+            <tr>
+               <% @all_bus_lines.each_with_index do |value, i| %>
+               <% next if i == 0 %>
+               <% temp_num = i * 8 - 5%>
+               <td align="center" id="schem-<%=temp_num%>">
+                  PGi:  <%=@bus_data[10 * i - 6]%>
+               </td>
+               <% end %>
+            </tr>
+            <tr>
+               <% @all_bus_lines.each_with_index do |value, i| %>
+               <% next if i == 0 %>
+               <% temp_num = i * 8 - 4%>
+               <td align="center" id="schem-<%=temp_num%>">
+                  QGi:  <%=@bus_data[10 * i - 5]%>
+               </td>
+               <% end %>
+            </tr>
+            <tr>
+               <% @all_bus_lines.each_with_index do |value, i| %>
+               <% next if i == 0 %>
+               <% temp_num = i * 8 - 3%>
+               <td align="center" id="schem-<%=temp_num%>">
+                  PLi:  <%=@bus_data[10 * i - 4]%>
+               </td>
+               <% end %>
+            </tr>
+            <tr>
+               <% @all_bus_lines.each_with_index do |value, i| %>
+               <% next if i == 0 %>
+               <% temp_num = i * 8 - 2%>
+               <td align="center" id="schem-<%=temp_num%>">
+                  PLi:  <%=@bus_data[10 * i - 3]%>
+               </td>
+               <% end %>
+            </tr>
+            <tr>
+               <% @all_bus_lines.each_with_index do |value, i| %>
+               <% next if i == 0 %>
+               <% temp_num = i * 8 - 1%>
+               <td align="center" id="schem-<%=temp_num%>">
+                  QMin:  <%=@bus_data[10 * i - 2]%>
+               </td>
+               <% end %>
+            </tr>
+            <tr>
+               <% @all_bus_lines.each_with_index do |value, i| %>
+               <% next if i == 0 %>
+               <% temp_num = i * 8%>
+               <td align="center" id="schem-<%=temp_num%>">
+                  QMax:  <%=@bus_data[10 * i - 1]%>
+               </td>
+               <% end %>
+            </tr>
+            <tr class="sch">
+               <% @all_bus_lines.each_with_index do |value, i| %>
+               <% next if i == 0%>
+               <td class="sch" id="bus-img-<%=i%>">
+                  <img width="150px" src="Slack.png">
+               </td>
+               <% end %>
+            </tr>
+            <% @all_line_lines.each_with_index do |value, i| %>
             <% next if i == 0%>
-          <td class="sch" id="bus-img-<%=i%>">
-            <img width="150px" src="Slack.png">
-          </td>
-          <% end %>
-        </tr>
-        <% @all_line_lines.each_with_index do |value, i| %>
-          <% next if i == 0%>
-          <tr class="sch" id="schematic-line-<%=i%>">
-          <% @all_bus_lines.each_with_index do |value_2, j| %>
-            <% next if j == 0%>
-            <td class="sch">
-              <img width="150px" src="No-connect.png">
-            </td>
-          <% end %>
-          </tr>
-        <% end %>
-      </table>
-    </div>
-  </body>
+            <tr class="sch" id="schematic-line-<%=i%>">
+               <% @all_bus_lines.each_with_index do |value_2, j| %>
+               <% next if j == 0%>
+               <td class="sch">
+                  <img width="150px" src="No-connect.png">
+               </td>
+               <% end %>
+            </tr>
+            <% end %>
+         </table>
+      </div>
+   </body>
 </html>
