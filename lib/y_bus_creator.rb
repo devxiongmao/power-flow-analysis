@@ -22,10 +22,10 @@ class YBusCreator
     num_of_lines.times do |i|
       deno = ((@resistance_list[i]**2) + (@reactance_list[i]**2))
       @y[i] = if (@reactance_list[i]).zero?
-                [(@resistance_list[i] / deno), (@reactance_list[i] / deno)]
-              else
-                [(@resistance_list[i] / deno), (-1 * @reactance_list[i] / deno)]
-              end
+                [ (@resistance_list[i] / deno), (@reactance_list[i] / deno) ]
+      else
+                [ (@resistance_list[i] / deno), (-1 * @reactance_list[i] / deno) ]
+      end
     end
   end
 
@@ -43,7 +43,7 @@ class YBusCreator
     num_of_buses.times do |i| # Initialize empty nxn Y Bus matrix
       y_bus[i] = [] unless y_bus[i]
       num_of_buses.times do |j|
-        y_bus[i][j] = [0, 0]
+        y_bus[i][j] = [ 0, 0 ]
       end
     end
 
