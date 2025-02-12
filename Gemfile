@@ -3,11 +3,13 @@
 source "https://rubygems.org"
 
 # Define your Ruby version (optional but recommended)
-ruby "3.0.0"
+ruby "3.2.2"
 
 # Add dependencies
 gem "rubocop", require: false
 gem "sinatra"
+gem "matrix"
+gem "webrick"
 
 group :development, :test do
     gem "pry"
