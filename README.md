@@ -16,14 +16,14 @@ A web-based application for performing power flow analysis. Built with Ruby and 
 
 Ensure you have the following software installed:
 
-- Ruby (>= 2.6.0)
+- Ruby (>= 3.2.2)
 - Bundler (for managing gems)
 
 ### Cloning the Repository
 
 ```bash
-git clone https://github.com/yourusername/power-flow-analysis-tool.git
-cd power-flow-analysis-tool
+git clone https://github.com/devxiongmao/power-flow-analysis.git
+cd power-flow-analysis
 ```
 
 ### Installing Dependencies
