@@ -99,7 +99,7 @@ post('/analyze') do
 
   #### BUILD THE Y BUS MATRIX ####
   y_bus_creator = YBusCreator.new(@num_of_buses, num_of_lines, params)
-  y_bus = y_bus_creator.create_y_bus(@num_of_buses, num_of_lines)
+  y_bus = y_bus_creator.create_y_bus(@num_of_buses)
   from_bus = y_bus_creator.return_from_bus_list
   to_bus = y_bus_creator.return_to_bus_list
 
