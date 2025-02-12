@@ -8,7 +8,7 @@ class PolarToRectangular
     num_of_buses = v_data.size
 
     num_of_buses.times do |i|
-      polar[i] = [0, 0] unless polar[i]
+      polar[i] = [ 0, 0 ] unless polar[i]
     end
 
     v_data.each_with_index do |value, i|

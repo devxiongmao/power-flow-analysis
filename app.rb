@@ -385,7 +385,7 @@ post('/analyze') do
   @del_degree = []
 
   @num_of_buses.times do |i|
-    vMag[i] = [0, 0]
+    vMag[i] = [ 0, 0 ]
   end
 
   @num_of_buses.times do |i|
@@ -403,7 +403,7 @@ post('/analyze') do
   si = []
 
   @num_of_buses.times do |i|
-    @z[i] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    @z[i] = [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ]
     si[i] = 0
   end
 
@@ -411,8 +411,8 @@ post('/analyze') do
     iij[i] = []
     sij[i] = []
     @num_of_buses.times do |j|
-      iij[i][j] = [0, 0]
-      sij[i][j] = [0, 0]
+      iij[i][j] = [ 0, 0 ]
+      sij[i][j] = [ 0, 0 ]
     end
   end
 
@@ -420,7 +420,7 @@ post('/analyze') do
 
   # BUS CURRENT INJECTIONS
   @num_of_buses.times do |i|
-    i_matrix[i] = [0, 0]
+    i_matrix[i] = [ 0, 0 ]
 
     @num_of_buses.times do |j|
       i_matrix[i][0] = i_matrix[i][0] + (y_bus[i][j][0] * vMag[j][0] - y_bus[i][j][1] * vMag[j][1])
@@ -476,7 +476,7 @@ post('/analyze') do
     @num_of_buses.times do |n|
       if n > m
         if (sij[m][n][0] != 0) && (sij[m][n][1] != 0)
-          @z[k] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0] unless @z[k]
+          @z[k] = [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ] unless @z[k]
           @z[k][0] = m
           @z[k][1] = n
           @z[k][2] = sij[m][n][0]
@@ -485,7 +485,7 @@ post('/analyze') do
         end
       elsif m > n
         if (sij[m][n][0] != 0) && (sij[m][n][1] != 0)
-          @z[l] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0] unless @z[l]
+          @z[l] = [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ] unless @z[l]
           @z[l][4] = m
           @z[l][5] = n
           @z[l][6] = sij[m][n][0]
@@ -509,7 +509,7 @@ post('/analyze') do
 
   lij = []
   num_of_lines.times do |i|
-    lij[i] = [0, 0]
+    lij[i] = [ 0, 0 ]
   end
 
   num_of_lines.times do |m|
@@ -535,7 +535,7 @@ post('/analyze') do
   si = []
 
   @num_of_buses.times do |i|
-    si[i] = [0, 0]
+    si[i] = [ 0, 0 ]
     @num_of_buses.times do |k|
       si[i][0] =
         si[i][0] + (vMag[i][0] * vMag[k][0] * y_bus[i][k][0] - vMag[i][0] * vMag[k][1] * y_bus[i][k][1] - (-1 * vMag[i][1]) * vMag[k][0] * y_bus[i][k][1] - (-1 * vMag[i][1]) * vMag[k][1] * y_bus[i][k][0]) * 100
@@ -581,10 +581,10 @@ post('/analyze') do
   # GENERATE RESULTS
   @time = Time.now.strftime('%d-%m-%Y-%H-%M-%S')
   CSV.open("results/PowerFlowAnalysis-NR-#{@time}.csv", 'wb') do |csv|
-    csv << ['Bus Number', 'Type', 'V', 'D', 'P', 'Q']
+    csv << [ 'Bus Number', 'Type', 'V', 'D', 'P', 'Q' ]
 
     @num_of_buses.times do |bus|
-      new_line = [bus + 1]
+      new_line = [ bus + 1 ]
       new_line.push(@types[bus])
       new_line.push(@v_data[bus])
       new_line.push(@d_data[bus])
@@ -593,12 +593,12 @@ post('/analyze') do
       csv << new_line
     end
     csv << []
-    csv << ['Newton Raphson Load Flow Analysis']
-    csv << ['Bus #', 'V (pu)', 'Angle (degree)', 'Injection MW', 'Injection MVar', 'Generation MW', 'Generation MVar',
-            'Load MW', 'Load MVar']
+    csv << [ 'Newton Raphson Load Flow Analysis' ]
+    csv << [ 'Bus #', 'V (pu)', 'Angle (degree)', 'Injection MW', 'Injection MVar', 'Generation MW', 'Generation MVar',
+            'Load MW', 'Load MVar' ]
 
     @num_of_buses.times do |i|
-      new_line = [i + 1]
+      new_line = [ i + 1 ]
       new_line.push(@v_data[i])
       new_line.push(@del_degree[i])
       new_line.push(@p_injection[i])
@@ -609,7 +609,7 @@ post('/analyze') do
       new_line.push(@ql_data[i])
       csv << new_line
     end
-    new_line = ['Total']
+    new_line = [ 'Total' ]
     new_line.push('')
     new_line.push('')
     new_line.push(@pTotal)
@@ -620,12 +620,12 @@ post('/analyze') do
     new_line.push(@qlTotal)
     csv << new_line
     csv << []
-    csv << ['Line Flows and Losses']
-    csv << ['From Bus', 'To Bus', 'P MW', 'Q MVar', 'From Bus', 'To Bus', 'P MW', 'Q MVar', 'Line Loss MW',
-            'Line Loss MVar']
+    csv << [ 'Line Flows and Losses' ]
+    csv << [ 'From Bus', 'To Bus', 'P MW', 'Q MVar', 'From Bus', 'To Bus', 'P MW', 'Q MVar', 'Line Loss MW',
+            'Line Loss MVar' ]
 
     @z.each do |row|
-      new_line = [row[0]]
+      new_line = [ row[0] ]
       new_line.push(row[1])
       new_line.push(row[2])
       new_line.push(row[3])
@@ -638,7 +638,7 @@ post('/analyze') do
       csv << new_line
     end
 
-    new_line = ['Total Loss']
+    new_line = [ 'Total Loss' ]
     new_line.push('')
     new_line.push('')
     new_line.push('')

@@ -62,18 +62,18 @@ RSpec.describe 'The HelloWorld App' do
   describe 'GET /download/:time' do
     let(:time) { '20240211' }
     let(:file_path) { "results/PowerFlowAnalysis-NR-#{time}.csv" }
-  
+
     before do
       FileUtils.mkdir_p('results')
       File.open(file_path, 'w') { |file| file.write("column1,column2\nvalue1,value2") }
     end
-  
+
     it 'downloads a time-stamped power flow analysis CSV' do
       get "/download/#{time}"
       expect(last_response).to be_ok
       expect(last_response.headers['Content-Disposition']).to include("PowerFlowAnalysis-NR-#{time}.csv")
     end
-  
+
     after do
       File.delete(file_path) if File.exist?(file_path)
     end
@@ -83,23 +83,22 @@ RSpec.describe 'The HelloWorld App' do
     let(:bus_file) do
       Rack::Test::UploadedFile.new('spec/fixtures/bus_example.csv', 'text/csv')
     end
-    
+
     let(:line_file) do
       Rack::Test::UploadedFile.new('spec/fixtures/line_example.csv', 'text/csv')
     end
-    
+
     before do
       File.write('spec/fixtures/bus_example.csv', "Bus,Voltage,Angle\n1,1.0,0.0\n2,1.02,5.0")
       File.write('spec/fixtures/line_example.csv', "From,To,Impedance\n1,2,0.01+0.02j")
     end
-    
+
     it 'processes uploaded CSV files and responds with success' do
       post '/check', busFile: bus_file, lineFile: line_file
-    
+
       expect(last_response).to be_ok
       expect(last_response.body).to include("1.0")
-      expect(last_response.body).to include("Manual Data Entry") 
+      expect(last_response.body).to include("Manual Data Entry")
     end
   end
 end
-
