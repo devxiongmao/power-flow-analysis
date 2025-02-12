@@ -2,6 +2,7 @@
 
 class PolarToRectangular
   def main(v_data, d_data)
+    raise if v_data.size != d_data.size
     polar = []
 
     num_of_buses = v_data.size
