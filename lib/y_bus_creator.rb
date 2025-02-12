@@ -1,72 +1,75 @@
 # frozen_string_literal: true
 
+# Creates the YBus for use during the processing
 class YBusCreator
+  Line = Struct.new(:from, :to, :resistance, :reactance, :ground_admittance, :tap_setting, :y)
+
   def initialize(_num_of_buses, num_of_lines, data)
-    @from_bus_list = []
-    @to_bus_list = []
-    @resistance_list = []
-    @reactance_list = []
-    @ground_admittance = []
-    @tap_setting = []
-
-    num_of_lines.times do |i|
-      @from_bus_list.push(data["from-#{i + 1}"].to_f - 1)
-      @to_bus_list.push(data["to-#{i + 1}"].to_f - 1)
-      @resistance_list.push(data["line-resistance-#{i + 1}"].to_f)
-      @reactance_list.push(data["line-reactance-#{i + 1}"].to_f)
-      @ground_admittance.push(data["ground-admittance-#{i + 1}"].to_f)
-      @tap_setting.push(data["tap-setting-#{i + 1}"].to_f)
-    end
-
-    @y = []
-    num_of_lines.times do |i|
-      deno = ((@resistance_list[i]**2) + (@reactance_list[i]**2))
-      @y[i] = if (@reactance_list[i]).zero?
-                [ (@resistance_list[i] / deno), (@reactance_list[i] / deno) ]
-      else
-                [ (@resistance_list[i] / deno), (-1 * @reactance_list[i] / deno) ]
-      end
-    end
+    @lines = Array.new(num_of_lines) { |i| parse_line_data(i, data) }
   end
 
   def return_from_bus_list
-    @from_bus_list
+    @lines.map(&:from)
   end
 
   def return_to_bus_list
-    @to_bus_list
+    @lines.map(&:to)
   end
 
-  def create_y_bus(num_of_buses, num_of_lines)
-    #### BUILD THE Y BUS MATRIX ####
-    y_bus = []
-    num_of_buses.times do |i| # Initialize empty nxn Y Bus matrix
-      y_bus[i] = [] unless y_bus[i]
-      num_of_buses.times do |j|
-        y_bus[i][j] = [ 0, 0 ]
-      end
-    end
+  def create_y_bus(num_of_buses)
+    y_bus = Array.new(num_of_buses) { Array.new(num_of_buses, [ 0, 0 ]) }
 
-    num_of_lines.times do |i|
-      y_bus[@from_bus_list[i]][@to_bus_list[i]][0] =
-        y_bus[@from_bus_list[i]][@to_bus_list[i]][0] - @y[i][0] / @tap_setting[i]
-      y_bus[@from_bus_list[i]][@to_bus_list[i]][1] =
-        y_bus[@from_bus_list[i]][@to_bus_list[i]][1] - @y[i][1] / @tap_setting[i]
-      y_bus[@to_bus_list[i]][@from_bus_list[i]] = y_bus[@from_bus_list[i]][@to_bus_list[i]]
+    @lines.each do |line|
+      update_off_diagonal(y_bus, line)
     end
 
     num_of_buses.times do |m|
-      num_of_lines.times do |n|
-        if @from_bus_list[n] == m
-          y_bus[m][m][0] = y_bus[m][m][0] + @y[n][0] / (@tap_setting[n]**2)
-          y_bus[m][m][1] = y_bus[m][m][1] + @y[n][1] / (@tap_setting[n]**2) + @ground_admittance[n]
-        elsif @to_bus_list[n] == m
-          y_bus[m][m][0] = y_bus[m][m][0] + @y[n][0]
-          y_bus[m][m][1] = y_bus[m][m][1] + @y[n][1] + @ground_admittance[n]
-        end
-      end
+      @lines.each { |line| update_diagonal(y_bus, m, line) }
     end
 
     y_bus
+  end
+
+  private
+
+  def parse_line_data(i, data)
+    from = data["from-#{i + 1}"].to_f - 1
+    to = data["to-#{i + 1}"].to_f - 1
+    resistance = data["line-resistance-#{i + 1}"].to_f
+    reactance = data["line-reactance-#{i + 1}"].to_f
+    ground_admittance = data["ground-admittance-#{i + 1}"].to_f
+    tap_setting = data["tap-setting-#{i + 1}"].to_f
+
+    y = calculate_admittance(resistance, reactance)
+
+    Line.new(from, to, resistance, reactance, ground_admittance, tap_setting, y)
+  end
+
+  def calculate_admittance(resistance, reactance)
+    denominator = resistance**2 + reactance**2
+    [ resistance / denominator, -reactance / denominator ]
+  end
+
+  def update_off_diagonal(y_bus, line)
+    y_bus[line.from][line.to] = [
+      y_bus[line.from][line.to][0] - line.y[0] / line.tap_setting,
+      y_bus[line.from][line.to][1] - line.y[1] / line.tap_setting
+    ]
+
+    y_bus[line.to][line.from] = y_bus[line.from][line.to]
+  end
+
+  def update_diagonal(y_bus, m, line)
+    if line.from == m
+      y_bus[m][m] = [
+        y_bus[m][m][0] + line.y[0] / (line.tap_setting**2),
+        y_bus[m][m][1] + line.y[1] / (line.tap_setting**2) + line.ground_admittance
+      ]
+    elsif line.to == m
+      y_bus[m][m] = [
+        y_bus[m][m][0] + line.y[0],
+        y_bus[m][m][1] + line.y[1] + line.ground_admittance
+      ]
+    end
   end
 end
