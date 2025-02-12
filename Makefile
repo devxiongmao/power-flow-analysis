@@ -7,6 +7,10 @@ install:
 dev:
 	ruby app.rb
 
+.PHONY: test
+test:
+	rspec
+
 .PHONY: rubocop
 rubocop:
 	rubocop -A

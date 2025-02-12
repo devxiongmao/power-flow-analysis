@@ -8,3 +8,10 @@ ruby '3.0.0'
 # Add dependencies
 gem 'rubocop', require: false
 gem 'sinatra'
+
+
+group :test do
+  gem 'rspec'
+  gem 'rack-test'
+end
+  
