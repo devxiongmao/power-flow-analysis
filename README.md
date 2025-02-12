@@ -45,7 +45,7 @@ make install
 To start the application, use the following command:
 
 ```bash
-ruby app.rb
+make dev
 ```
 
 The application will start locally on `http://localhost:4567`.
@@ -56,6 +56,14 @@ The application will start locally on `http://localhost:4567`.
 - Upload your CSV file containing the load and line information for your power flow schematic.
 - Use the interactive interface to build and modify the schematic.
 - Ensure that your input data is valid and non-null for proper operation of the tool.
+
+## Testing
+
+This project uses rspec for testing. To run tests, simply run:
+
+```bash
+make test
+```
 
 ## Contributing
 
