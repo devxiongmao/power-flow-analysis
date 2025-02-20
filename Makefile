@@ -20,7 +20,7 @@ docker-build:
 	docker build -t power-flow-analysis-app .
 
 .PHONY: docker-up
-docker-build:
+docker-up:
 	docker compose up
 
 .PHONY: determine-app-version
