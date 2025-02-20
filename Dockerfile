@@ -7,6 +7,8 @@ RUN bundle install
 
 COPY . .
 
+ENV RACK_ENV=production
+
 # Expose the port Sinatra runs on
 EXPOSE 4567
 
