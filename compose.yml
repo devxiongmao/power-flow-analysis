@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  app:
+    container_name: power-flow-app
+    build:
+      context: ./
+      dockerfile: ./Dockerfile
+    restart: always
+    tty: true
+    stdin_open: true
+    ports:
+      - 4567:4567
+    volumes:
+      - .:/app
+    environment:
+      RAILS_ENV: development
