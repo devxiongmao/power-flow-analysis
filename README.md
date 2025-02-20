@@ -77,6 +77,10 @@ This project uses rspec for testing. To run tests, simply run:
 make test
 ```
 
+## Try it out!
+
+This app is deployed via [Fly.io](https://fly.io/). You can check it out [here](https://power-flow-analysis.fly.dev) and give it a whirl!
+
 ## Contributing
 
 We welcome contributions! To contribute:
