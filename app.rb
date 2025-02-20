@@ -10,7 +10,7 @@ require 'openssl'
 
 set :bind, '0.0.0.0'
 set :protection, except: :host
-set :allowed_hosts, ['power-flow-analysis.fly.dev']
+set :allowed_hosts, [ 'power-flow-analysis.fly.dev' ]
 
 # cert = OpenSSL::X509::Certificate.new File.read 'c:/Apache24/htdocs/server.crt'
 # pkey = OpenSSL::PKey::RSA.new File.read 'c:/Apache24/htdocs/server.key'
