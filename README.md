@@ -50,6 +50,18 @@ make dev
 
 The application will start locally on `http://localhost:4567`.
 
+Alternatively, you can run the app through docker. To build the image, run:
+
+```bash
+make docker-build
+```
+
+Then to start the app, run:
+
+```bash
+make docker-up
+```
+
 ## Usage
 
 - Open your web browser and go to `http://localhost:4567`.
