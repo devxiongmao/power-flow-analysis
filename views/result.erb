@@ -55,21 +55,7 @@
       </style>
    </head>
    <body>
-      <div id="header">
-         <h1>Online Power Flow Assessment Tool</h1>
-         <p>Capstone Design Project</p>
-         <p>&copy; 2018 - 2019 Darian Brandolino, Adriano Mazzucco & Jonathan Psaila</p>
-         <div id="options">
-            <table>
-               <tr>
-                  <td><a class="header-link" href="/">Home</a></td>
-                  <td><a class="header-link" href="/manual">Manual Input</a></td>
-                  <td><a class="header-link" href="/info">Technical Info</a></td>
-                  <td><a class="header-link" href="/about">About</a></td>
-               </tr>
-            </table>
-         </div>
-      </div>
+      <%= erb :'_header' %>
       <p>Download Results in CSV format by clicking <a class="download-link" href="/download/<%=@time%>">HERE</a></p>
       <div id="result-tables">
          <h1>Results</h1>
