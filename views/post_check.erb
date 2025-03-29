@@ -15,21 +15,7 @@
    <%num_of_buses = @all_bus_lines.size - 1%>
    <%num_of_lines = @all_line_lines.size - 1%>
    <body onload="buildSchematicFromCSV(<%=num_of_buses%>, <%=num_of_lines%>);">
-      <div id="header">
-         <h1>Online Power Flow Assessment Tool</h1>
-         <p>Capstone Design Project</p>
-         <p>&copy; 2018 - 2019 Darian Brandolino, Adriano Mazzucco & Jonathan Psaila</p>
-         <div id="options">
-            <table>
-               <tr>
-                  <td><a class="header-link" href="/">Home</a></td>
-                  <td><a class="header-link" href="/manual">Manual Input</a></td>
-                  <td><a class="header-link" href="/info">Technical Info</a></td>
-                  <td><a class="header-link" href="/about">About</a></td>
-               </tr>
-            </table>
-         </div>
-      </div>
+      <%= erb :'_header' %>
       <div>
          <h1>Manual Data Entry</h1>
          <form method="post" action="/analyze">
