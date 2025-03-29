@@ -1,6 +1,7 @@
-### From v0.1.4 to HEAD
+### From v0.1.5 to HEAD
 
-- XMDEV-162: Adds Fly.io config for deployment (#23) (5d323d9) by Jon
+- NO-JIRA: Refactor views to use header partial (d4ecf20) by Jon Psaila
+- NO-JIRA: Updates css rule for header (45c655b) by Jon Psaila
 
 Please see our [releases](https://github.com/devxiongmao/power-flow-analysis/releases) page for previous changelogs per version.
 
