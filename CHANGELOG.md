@@ -1,7 +1,7 @@
-### From v0.1.6 to HEAD
+### From v0.1.7 to HEAD
 
-- NO-JIRA: Maintenance, bundle update to get latest gem versions (6b30420) by Jon Psaila
-- XMDEV-257: Fixes issue with Results folder not being auto-created (fbf3fd5) by Jon Psaila
+- XMDEV-259: Adds github release workflow to CI (fe51b8b) by Jon Psaila
+- XMDEV-258: Adds dependabot to check for updated gems (26c48b4) by Jon Psaila
 
 Please see our [releases](https://github.com/devxiongmao/power-flow-analysis/releases) page for previous changelogs per version.
 
