@@ -584,6 +584,7 @@ post('/analyze') do
 
   # GENERATE RESULTS
   @time = Time.now.strftime('%d-%m-%Y-%H-%M-%S')
+  Dir.mkdir('results') unless Dir.exist?('results')
   CSV.open("results/PowerFlowAnalysis-NR-#{@time}.csv", 'wb') do |csv|
     csv << [ 'Bus Number', 'Type', 'V', 'D', 'P', 'Q' ]
 
