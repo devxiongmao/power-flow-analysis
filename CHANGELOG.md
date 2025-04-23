@@ -1,7 +1,6 @@
-### From v0.1.7 to HEAD
+### From v0.1.8 to HEAD
 
-- XMDEV-259: Adds github release workflow to CI (fe51b8b) by Jon Psaila
-- XMDEV-258: Adds dependabot to check for updated gems (26c48b4) by Jon Psaila
+- Bump rubocop from 1.75.2 to 1.75.3 (#32) (14d057c) by dependabot[bot]
 
 Please see our [releases](https://github.com/devxiongmao/power-flow-analysis/releases) page for previous changelogs per version.
 
