@@ -1,9 +1,9 @@
-name: Prevent Main Merge
+name: Prevent Master Merge
 
 on:
   pull_request:
     branches:
-      - main
+      - master
 
 jobs:
   check-branch-name:
