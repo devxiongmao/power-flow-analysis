@@ -32,7 +32,7 @@ jobs:
           echo "Target branch: ${{ steps.get-pr-info.outputs.base_ref }}"
 
           # Use the fetched branch information
-          if [[ "${{ steps.get-pr-info.outputs.base_ref }}" == "main" && "${{ steps.get-pr-info.outputs.head_ref }}" != release-* ]]; then
-            echo "Error: Only branches starting with 'release-' can be merged into main."
+          if [[ "${{ steps.get-pr-info.outputs.base_ref }}" == "master" && "${{ steps.get-pr-info.outputs.head_ref }}" != release-* ]]; then
+            echo "Error: Only branches starting with 'release-' can be merged into master."
             exit 1
           fi
