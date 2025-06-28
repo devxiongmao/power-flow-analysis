@@ -14,7 +14,9 @@
    </head>
    <%num_of_buses = @all_bus_lines.size - 1%>
    <%num_of_lines = @all_line_lines.size - 1%>
-   <body onload="buildSchematicFromCSV(<%=num_of_buses%>, <%=num_of_lines%>);">
+   <%max_bus_num = @bus_data.each_slice(10).map { |slice| slice[0].to_i }.max%>
+   <%max_line_num = (@line_data.size / 6.0).ceil%>
+   <body onload="buildSchematicFromCSV(<%=max_bus_num%>, <%=max_line_num%>);">
       <%= erb :'_header' %>
       <div>
          <h1>Manual Data Entry</h1>
@@ -143,90 +145,101 @@
          <h2>Dynamic Schematic</h2>
          <table style="border-collapse: collapse" id="schematic">
             <tr>
-               <% @all_bus_lines.each_with_index do |value, i| %>
+               <% @bus_data.each_slice(10).with_index do |slice, i| %>
                <% next if i == 0 %>
-               <% temp_num = i * 8 - 7%>
+               <% bus_num = slice[0].to_i %>
+               <% temp_num = bus_num * 8 - 7 %>
                <td align="center" id="schem-<%=temp_num%>">
-                  V:  <%=@bus_data[10 * i - 8]%>
+                  V:  <%=slice[2]%>
                </td>
                <% end %>
             </tr>
             <tr>
-               <% @all_bus_lines.each_with_index do |value, i| %>
+               <% @bus_data.each_slice(10).with_index do |slice, i| %>
                <% next if i == 0 %>
-               <% temp_num = i * 8 - 6%>
+               <% bus_num = slice[0].to_i %>
+               <% temp_num = bus_num * 8 - 6 %>
                <td align="center" id="schem-<%=temp_num%>">
-                  A:  <%=@bus_data[10 * i - 7]%>
+                  A:  <%=slice[3]%>
                </td>
                <% end %>
             </tr>
             <tr>
-               <% @all_bus_lines.each_with_index do |value, i| %>
+               <% @bus_data.each_slice(10).with_index do |slice, i| %>
                <% next if i == 0 %>
-               <% temp_num = i * 8 - 5%>
+               <% bus_num = slice[0].to_i %>
+               <% temp_num = bus_num * 8 - 5 %>
                <td align="center" id="schem-<%=temp_num%>">
-                  PGi:  <%=@bus_data[10 * i - 6]%>
+                  PGi:  <%=slice[4]%>
                </td>
                <% end %>
             </tr>
             <tr>
-               <% @all_bus_lines.each_with_index do |value, i| %>
+               <% @bus_data.each_slice(10).with_index do |slice, i| %>
                <% next if i == 0 %>
-               <% temp_num = i * 8 - 4%>
+               <% bus_num = slice[0].to_i %>
+               <% temp_num = bus_num * 8 - 4 %>
                <td align="center" id="schem-<%=temp_num%>">
-                  QGi:  <%=@bus_data[10 * i - 5]%>
+                  QGi:  <%=slice[5]%>
                </td>
                <% end %>
             </tr>
             <tr>
-               <% @all_bus_lines.each_with_index do |value, i| %>
+               <% @bus_data.each_slice(10).with_index do |slice, i| %>
                <% next if i == 0 %>
-               <% temp_num = i * 8 - 3%>
+               <% bus_num = slice[0].to_i %>
+               <% temp_num = bus_num * 8 - 3 %>
                <td align="center" id="schem-<%=temp_num%>">
-                  PLi:  <%=@bus_data[10 * i - 4]%>
+                  PLi:  <%=slice[6]%>
                </td>
                <% end %>
             </tr>
             <tr>
-               <% @all_bus_lines.each_with_index do |value, i| %>
+               <% @bus_data.each_slice(10).with_index do |slice, i| %>
                <% next if i == 0 %>
-               <% temp_num = i * 8 - 2%>
+               <% bus_num = slice[0].to_i %>
+               <% temp_num = bus_num * 8 - 2 %>
                <td align="center" id="schem-<%=temp_num%>">
-                  PLi:  <%=@bus_data[10 * i - 3]%>
+                  QLi:  <%=slice[7]%>
                </td>
                <% end %>
             </tr>
             <tr>
-               <% @all_bus_lines.each_with_index do |value, i| %>
+               <% @bus_data.each_slice(10).with_index do |slice, i| %>
                <% next if i == 0 %>
-               <% temp_num = i * 8 - 1%>
+               <% bus_num = slice[0].to_i %>
+               <% temp_num = bus_num * 8 - 1 %>
                <td align="center" id="schem-<%=temp_num%>">
-                  QMin:  <%=@bus_data[10 * i - 2]%>
+                  QMin:  <%=slice[8]%>
                </td>
                <% end %>
             </tr>
             <tr>
-               <% @all_bus_lines.each_with_index do |value, i| %>
+               <% @bus_data.each_slice(10).with_index do |slice, i| %>
                <% next if i == 0 %>
-               <% temp_num = i * 8%>
+               <% bus_num = slice[0].to_i %>
+               <% temp_num = bus_num * 8 %>
                <td align="center" id="schem-<%=temp_num%>">
-                  QMax:  <%=@bus_data[10 * i - 1]%>
+                  QMax:  <%=slice[9]%>
                </td>
                <% end %>
             </tr>
             <tr class="sch">
-               <% @all_bus_lines.each_with_index do |value, i| %>
-               <% next if i == 0%>
-               <td class="sch" id="bus-img-<%=i%>">
+               <% @bus_data.each_slice(10).with_index do |slice, i| %>
+               <% next if i == 0 %>
+               <% bus_num = slice[0].to_i %>
+               <td class="sch" id="bus-img-<%=bus_num%>">
                   <img width="150px" src="Slack.png">
                </td>
                <% end %>
             </tr>
-            <% @all_line_lines.each_with_index do |value, i| %>
-            <% next if i == 0%>
-            <tr class="sch" id="schematic-line-<%=i%>">
-               <% @all_bus_lines.each_with_index do |value_2, j| %>
-               <% next if j == 0%>
+            <% @line_data.each_slice(6).with_index do |slice, i| %>
+            <% next if i == 0 %>
+            <% line_number = i %>
+            <tr class="sch" id="schematic-line-<%=line_number%>">
+               <% @bus_data.each_slice(10).with_index do |bus_slice, j| %>
+               <% next if j == 0 %>
+               <% bus_num = bus_slice[0].to_i %>
                <td class="sch">
                   <img width="150px" src="No-connect.png">
                </td>
