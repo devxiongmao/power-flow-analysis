@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require_relative 'cramers_rule'
-require_relative 'y_bus_creator'
-require 'matrix'
+require_relative "cramers_rule"
+require_relative "y_bus_creator"
+require "matrix"
 
 # Handles the core power flow analysis using Newton-Raphson method
 class PowerFlowAnalyzer
@@ -12,7 +12,7 @@ class PowerFlowAnalyzer
     @num_of_buses = bus_data[:num_of_buses]
     @num_of_lines = line_data[:num_of_lines]
     @params = bus_data[:params]
-    
+
     @types = []
     @v_data = []
     @d_data = []
@@ -24,7 +24,7 @@ class PowerFlowAnalyzer
     @qmax = []
     @p_data = []
     @q_data = []
-    
+
     initialize_bus_data
   end
 
@@ -36,7 +36,7 @@ class PowerFlowAnalyzer
 
     perform_newton_raphson_iteration(y_bus)
     calculate_final_results(y_bus, from_bus, to_bus)
-    
+
     build_results_hash(y_bus, from_bus, to_bus)
   end
 
@@ -47,14 +47,14 @@ class PowerFlowAnalyzer
     load_bus_numbers = []
 
     @num_of_buses.times do |i|
-      if @params["type-#{i + 1}"] == 'generator'
-        @types[i] = 'Generator'
+      if @params["type-#{i + 1}"] == "generator"
+        @types[i] = "Generator"
         pv_bus_numbers.push(i)
-      elsif @params["type-#{i + 1}"] == 'load'
-        @types[i] = 'Load'
+      elsif @params["type-#{i + 1}"] == "load"
+        @types[i] = "Load"
         load_bus_numbers.push(i)
       else # for Slack busses
-        @types[i] = 'Slack'
+        @types[i] = "Slack"
         pv_bus_numbers.push(i)
       end
 
@@ -79,26 +79,26 @@ class PowerFlowAnalyzer
 
     while tolerance > 0.000001
       processing_p_values, processing_q_values = calculate_power_values(y_bus)
-      
+
       adjust_generator_voltages(processing_q_values, iteration_num)
-      
+
       dPa, dQa = calculate_power_mismatches(p_specified, q_specified, processing_p_values, processing_q_values)
-      
+
       dP, dQ = build_mismatch_vectors(dPa, dQa)
-      
+
       error_vector = build_error_vector(dP, dQ)
-      
+
       jacobian = build_jacobian_matrix(y_bus, dQ.length)
-      
+
       correction_vector = solve_jacobian_equation(jacobian, error_vector)
-      
+
       update_voltage_and_angle_values(correction_vector, dQ.length)
-      
+
       iteration_num += 1
       absolute = error_vector.map { |value| value.negative? ? -1 * value : value }
       tolerance = absolute.max
     end
-    
+
     @p_data = processing_p_values
     @q_data = processing_q_values
   end
@@ -109,17 +109,17 @@ class PowerFlowAnalyzer
 
     @num_of_buses.times do |i|
       @num_of_buses.times do |k|
-        processing_p_values[i] += @v_data[i] * @v_data[k] * 
-          (y_bus[i][k][0] * Math.cos(@d_data[i] - @d_data[k]) + 
+        processing_p_values[i] += @v_data[i] * @v_data[k] *
+          (y_bus[i][k][0] * Math.cos(@d_data[i] - @d_data[k]) +
            y_bus[i][k][1] * Math.sin(@d_data[i] - @d_data[k]))
-        
-        processing_q_values[i] += @v_data[i] * @v_data[k] * 
-          (y_bus[i][k][0] * Math.sin(@d_data[i] - @d_data[k]) - 
+
+        processing_q_values[i] += @v_data[i] * @v_data[k] *
+          (y_bus[i][k][0] * Math.sin(@d_data[i] - @d_data[k]) -
            y_bus[i][k][1] * Math.cos(@d_data[i] - @d_data[k]))
       end
     end
 
-    [processing_p_values, processing_q_values]
+    [ processing_p_values, processing_q_values ]
   end
 
   def adjust_generator_voltages(processing_q_values, iteration_num)
@@ -127,7 +127,7 @@ class PowerFlowAnalyzer
 
     @num_of_buses.times do |n|
       next if n.zero?
-      next unless @types[n] == 'Generator'
+      next unless @types[n] == "Generator"
 
       qg = processing_q_values[n] + @ql_data[n]
       if qg < @qmin[n]
@@ -141,13 +141,13 @@ class PowerFlowAnalyzer
   def calculate_power_mismatches(p_specified, q_specified, processing_p_values, processing_q_values)
     dPa = []
     dQa = []
-    
+
     p_specified.each_with_index do |value, i|
       dPa[i] = value - processing_p_values[i]
       dQa[i] = q_specified[i] - processing_q_values[i]
     end
-    
-    [dPa, dQa]
+
+    [ dPa, dQa ]
   end
 
   def build_mismatch_vectors(dPa, dQa)
@@ -155,7 +155,7 @@ class PowerFlowAnalyzer
     dQ = Array.new(count_load_buses, 0)
 
     @num_of_buses.times do |i|
-      if @params["type-#{i + 1}"] == 'load'
+      if @params["type-#{i + 1}"] == "load"
         dQ[k] = dQa[i]
         k += 1
       end
@@ -167,7 +167,7 @@ class PowerFlowAnalyzer
       dP.push(dPa[i])
     end
 
-    [dP, dQ]
+    [ dP, dQ ]
   end
 
   def build_error_vector(dP, dQ)
@@ -182,7 +182,7 @@ class PowerFlowAnalyzer
     j2 = build_j2_matrix(y_bus, num_of_load_buses)
     j3 = build_j3_matrix(y_bus, num_of_load_buses)
     j4 = build_j4_matrix(y_bus, num_of_load_buses)
-    
+
     combine_jacobian_submatrices(j1, j2, j3, j4, num_of_load_buses)
   end
 
@@ -195,19 +195,19 @@ class PowerFlowAnalyzer
         n = k + 1
         if n == m
           @num_of_buses.times do |n|
-            j1[i][k] += @v_data[m] * @v_data[n] * 
-              (-y_bus[m][n][0] * Math.sin(@d_data[m] - @d_data[n]) + 
+            j1[i][k] += @v_data[m] * @v_data[n] *
+              (-y_bus[m][n][0] * Math.sin(@d_data[m] - @d_data[n]) +
                y_bus[m][n][1] * Math.cos(@d_data[m] - @d_data[n]))
           end
           j1[i][k] -= y_bus[m][m][1] * @v_data[m]**2
         else
-          j1[i][k] = @v_data[m] * @v_data[n] * 
-            (y_bus[m][n][0] * Math.sin(@d_data[m] - @d_data[n]) - 
+          j1[i][k] = @v_data[m] * @v_data[n] *
+            (y_bus[m][n][0] * Math.sin(@d_data[m] - @d_data[n]) -
              y_bus[m][n][1] * Math.cos(@d_data[m] - @d_data[n]))
         end
       end
     end
-    
+
     j1
   end
 
@@ -221,19 +221,19 @@ class PowerFlowAnalyzer
         n = load_bus_numbers[k]
         if n == m
           @num_of_buses.times do |n|
-            j2[i][k] += @v_data[n] * 
-              (y_bus[m][n][0] * Math.cos(@d_data[m] - @d_data[n]) + 
+            j2[i][k] += @v_data[n] *
+              (y_bus[m][n][0] * Math.cos(@d_data[m] - @d_data[n]) +
                y_bus[m][n][1] * Math.sin(@d_data[m] - @d_data[n]))
           end
           j2[i][k] += y_bus[m][m][0] * @v_data[m]
         else
-          j2[i][k] = @v_data[m] * 
-            (y_bus[m][n][0] * Math.cos(@d_data[m] - @d_data[n]) + 
+          j2[i][k] = @v_data[m] *
+            (y_bus[m][n][0] * Math.cos(@d_data[m] - @d_data[n]) +
              y_bus[m][n][1] * Math.sin(@d_data[m] - @d_data[n]))
         end
       end
     end
-    
+
     j2
   end
 
@@ -247,19 +247,19 @@ class PowerFlowAnalyzer
         n = k + 1
         if n == m
           @num_of_buses.times do |n|
-            j3[i][k] += @v_data[m] * @v_data[n] * 
-              (y_bus[m][n][0] * Math.cos(@d_data[m] - @d_data[n]) + 
+            j3[i][k] += @v_data[m] * @v_data[n] *
+              (y_bus[m][n][0] * Math.cos(@d_data[m] - @d_data[n]) +
                y_bus[m][n][1] * Math.sin(@d_data[m] - @d_data[n]))
           end
           j3[i][k] -= y_bus[m][m][0] * @v_data[m]**2
         else
-          j3[i][k] = @v_data[m] * @v_data[n] * 
-            (-y_bus[m][n][0] * Math.cos(@d_data[m] - @d_data[n]) - 
+          j3[i][k] = @v_data[m] * @v_data[n] *
+            (-y_bus[m][n][0] * Math.cos(@d_data[m] - @d_data[n]) -
              y_bus[m][n][1] * Math.sin(@d_data[m] - @d_data[n]))
         end
       end
     end
-    
+
     j3
   end
 
@@ -273,19 +273,19 @@ class PowerFlowAnalyzer
         n = load_bus_numbers[k]
         if n == m
           @num_of_buses.times do |n|
-            j4[i][k] += @v_data[n] * 
-              (y_bus[m][n][0] * Math.sin(@d_data[m] - @d_data[n]) - 
+            j4[i][k] += @v_data[n] *
+              (y_bus[m][n][0] * Math.sin(@d_data[m] - @d_data[n]) -
                y_bus[m][n][1] * Math.cos(@d_data[m] - @d_data[n]))
           end
           j4[i][k] -= y_bus[m][m][1] * @v_data[m]
         else
-          j4[i][k] = @v_data[m] * 
-            (y_bus[m][n][0] * Math.sin(@d_data[m] - @d_data[n]) - 
+          j4[i][k] = @v_data[m] *
+            (y_bus[m][n][0] * Math.sin(@d_data[m] - @d_data[n]) -
              y_bus[m][n][1] * Math.cos(@d_data[m] - @d_data[n]))
         end
       end
     end
-    
+
     j4
   end
 
@@ -332,7 +332,7 @@ class PowerFlowAnalyzer
     k = 0
     @num_of_buses.times do |i|
       next if i.zero?
-      if @params["type-#{i + 1}"] == 'load'
+      if @params["type-#{i + 1}"] == "load"
         @v_data[i] = correction_vector[@num_of_buses - 1 + k] + @v_data[i]
         k += 1
       end
@@ -349,13 +349,13 @@ class PowerFlowAnalyzer
   end
 
   def calculate_voltage_magnitudes
-    vMag = Array.new(@num_of_buses) { [0, 0] }
-    
+    vMag = Array.new(@num_of_buses) { [ 0, 0 ] }
+
     @num_of_buses.times do |i|
       vMag[i][0] = @v_data[i] * Math.cos(@d_data[i])
       vMag[i][1] = @v_data[i] * Math.sin(@d_data[i])
     end
-    
+
     vMag
   end
 
@@ -372,7 +372,7 @@ class PowerFlowAnalyzer
     si = []
 
     @num_of_buses.times do |i|
-      z[i] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+      z[i] = [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ]
       si[i] = 0
     end
 
@@ -380,8 +380,8 @@ class PowerFlowAnalyzer
       iij[i] = []
       sij[i] = []
       @num_of_buses.times do |j|
-        iij[i][j] = [0, 0]
-        sij[i][j] = [0, 0]
+        iij[i][j] = [ 0, 0 ]
+        sij[i][j] = [ 0, 0 ]
       end
     end
 
@@ -389,7 +389,7 @@ class PowerFlowAnalyzer
 
     # BUS CURRENT INJECTIONS
     @num_of_buses.times do |i|
-      i_matrix[i] = [0, 0]
+      i_matrix[i] = [ 0, 0 ]
 
       @num_of_buses.times do |j|
         i_matrix[i][0] += (y_bus[i][j][0] * @vMag[j][0] - y_bus[i][j][1] * @vMag[j][1])
@@ -444,7 +444,7 @@ class PowerFlowAnalyzer
       @num_of_buses.times do |n|
         if n > m
           if (sij[m][n][0] != 0) && (sij[m][n][1] != 0)
-            z[k] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0] unless z[k]
+            z[k] = [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ] unless z[k]
             z[k][0] = m
             z[k][1] = n
             z[k][2] = sij[m][n][0]
@@ -453,7 +453,7 @@ class PowerFlowAnalyzer
           end
         elsif m > n
           if (sij[m][n][0] != 0) && (sij[m][n][1] != 0)
-            z[l] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0] unless z[l]
+            z[l] = [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ] unless z[l]
             z[l][4] = m
             z[l][5] = n
             z[l][6] = sij[m][n][0]
@@ -477,7 +477,7 @@ class PowerFlowAnalyzer
 
     lij = []
     @num_of_lines.times do |i|
-      lij[i] = [0, 0]
+      lij[i] = [ 0, 0 ]
     end
 
     @num_of_lines.times do |m|
@@ -508,22 +508,22 @@ class PowerFlowAnalyzer
     q_injection = []
 
     @num_of_buses.times do |i|
-      si = [0, 0]
+      si = [ 0, 0 ]
       @num_of_buses.times do |k|
-        si[0] += (@vMag[i][0] * @vMag[k][0] * y_bus[i][k][0] - 
-                  @vMag[i][0] * @vMag[k][1] * y_bus[i][k][1] - 
-                  (-1 * @vMag[i][1]) * @vMag[k][0] * y_bus[i][k][1] - 
+        si[0] += (@vMag[i][0] * @vMag[k][0] * y_bus[i][k][0] -
+                  @vMag[i][0] * @vMag[k][1] * y_bus[i][k][1] -
+                  (-1 * @vMag[i][1]) * @vMag[k][0] * y_bus[i][k][1] -
                   (-1 * @vMag[i][1]) * @vMag[k][1] * y_bus[i][k][0]) * 100
-        si[1] += (@vMag[i][0] * @vMag[k][0] * y_bus[i][k][1] + 
-                  @vMag[i][0] * @vMag[k][1] * y_bus[i][k][0] + 
-                  (-1 * @vMag[i][1]) * @vMag[k][0] * y_bus[i][k][0] - 
+        si[1] += (@vMag[i][0] * @vMag[k][0] * y_bus[i][k][1] +
+                  @vMag[i][0] * @vMag[k][1] * y_bus[i][k][0] +
+                  (-1 * @vMag[i][1]) * @vMag[k][0] * y_bus[i][k][0] -
                   (-1 * @vMag[i][1]) * @vMag[k][1] * y_bus[i][k][1]) * 100
       end
       p_injection[i] = si[0]
       q_injection[i] = -1 * si[1]
     end
 
-    [p_injection, q_injection]
+    [ p_injection, q_injection ]
   end
 
   def calculate_generated_power
@@ -535,7 +535,7 @@ class PowerFlowAnalyzer
       reactive_generated[i] = @q_injection[i] + (@ql_data[i] * 100)
     end
 
-    [power_generated, reactive_generated]
+    [ power_generated, reactive_generated ]
   end
 
   def calculate_totals
@@ -575,10 +575,10 @@ class PowerFlowAnalyzer
   end
 
   def count_load_buses
-    @num_of_buses.times.count { |i| @params["type-#{i + 1}"] == 'load' }
+    @num_of_buses.times.count { |i| @params["type-#{i + 1}"] == "load" }
   end
 
   def get_load_bus_numbers
-    @num_of_buses.times.select { |i| @params["type-#{i + 1}"] == 'load' }
+    @num_of_buses.times.select { |i| @params["type-#{i + 1}"] == "load" }
   end
-end 
+end

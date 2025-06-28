@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'csv'
+require "csv"
 
 # Handles CSV file generation for power flow analysis results
 class CsvGenerator
@@ -25,27 +25,27 @@ class CsvGenerator
   def generate_csv
     ensure_results_directory_exists
     filename = "results/PowerFlowAnalysis-NR-#{@time}.csv"
-    
-    CSV.open(filename, 'wb') do |csv|
+
+    CSV.open(filename, "wb") do |csv|
       write_bus_summary_section(csv)
       write_detailed_analysis_section(csv)
       write_line_flows_section(csv)
     end
-    
+
     filename
   end
 
   private
 
   def ensure_results_directory_exists
-    Dir.mkdir('results') unless Dir.exist?('results')
+    Dir.mkdir("results") unless Dir.exist?("results")
   end
 
   def write_bus_summary_section(csv)
-    csv << ['Bus Number', 'Type', 'V', 'D', 'P', 'Q']
+    csv << [ "Bus Number", "Type", "V", "D", "P", "Q" ]
 
     @num_of_buses.times do |bus|
-      new_line = [bus + 1]
+      new_line = [ bus + 1 ]
       new_line.push(@types[bus])
       new_line.push(@v_data[bus])
       new_line.push(@d_data[bus])
@@ -57,12 +57,12 @@ class CsvGenerator
 
   def write_detailed_analysis_section(csv)
     csv << []
-    csv << ['Newton Raphson Load Flow Analysis']
-    csv << ['Bus #', 'V (pu)', 'Angle (degree)', 'Injection MW', 'Injection MVar', 
-            'Generation MW', 'Generation MVar', 'Load MW', 'Load MVar']
+    csv << [ "Newton Raphson Load Flow Analysis" ]
+    csv << [ "Bus #", "V (pu)", "Angle (degree)", "Injection MW", "Injection MVar",
+            "Generation MW", "Generation MVar", "Load MW", "Load MVar" ]
 
     @num_of_buses.times do |i|
-      new_line = [i + 1]
+      new_line = [ i + 1 ]
       new_line.push(@v_data[i])
       new_line.push(@del_degree[i])
       new_line.push(@p_injection[i])
@@ -78,9 +78,9 @@ class CsvGenerator
   end
 
   def write_totals_row(csv)
-    new_line = ['Total']
-    new_line.push('')
-    new_line.push('')
+    new_line = [ "Total" ]
+    new_line.push("")
+    new_line.push("")
     new_line.push(@totals[:pTotal])
     new_line.push(@totals[:qTotal])
     new_line.push(@totals[:pgTotal])
@@ -92,12 +92,12 @@ class CsvGenerator
 
   def write_line_flows_section(csv)
     csv << []
-    csv << ['Line Flows and Losses']
-    csv << ['From Bus', 'To Bus', 'P MW', 'Q MVar', 'From Bus', 'To Bus', 
-            'P MW', 'Q MVar', 'Line Loss MW', 'Line Loss MVar']
+    csv << [ "Line Flows and Losses" ]
+    csv << [ "From Bus", "To Bus", "P MW", "Q MVar", "From Bus", "To Bus",
+            "P MW", "Q MVar", "Line Loss MW", "Line Loss MVar" ]
 
     @z.each do |row|
-      new_line = [row[0]]
+      new_line = [ row[0] ]
       new_line.push(row[1])
       new_line.push(row[2])
       new_line.push(row[3])
@@ -114,16 +114,16 @@ class CsvGenerator
   end
 
   def write_line_losses_total(csv)
-    new_line = ['Total Loss']
-    new_line.push('')
-    new_line.push('')
-    new_line.push('')
-    new_line.push('')
-    new_line.push('')
-    new_line.push('')
-    new_line.push('')
+    new_line = [ "Total Loss" ]
+    new_line.push("")
+    new_line.push("")
+    new_line.push("")
+    new_line.push("")
+    new_line.push("")
+    new_line.push("")
+    new_line.push("")
     new_line.push(@results[:line_loss_1])
     new_line.push(@results[:line_loss_2])
     csv << new_line
   end
-end 
+end

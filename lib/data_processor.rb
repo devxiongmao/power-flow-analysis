@@ -10,7 +10,7 @@ class DataProcessor
   def process_csv_files(bus_file, line_file)
     @bus_data = parse_csv_file(bus_file)
     @line_data = parse_csv_file(line_file)
-    
+
     {
       bus_data: @bus_data,
       line_data: @line_data
@@ -22,8 +22,8 @@ class DataProcessor
     num_of_lines = 0
 
     params.each_key do |key|
-      num_of_buses += 1 if key.include?('type')
-      num_of_lines += 1 if key.include?('from')
+      num_of_buses += 1 if key.include?("type")
+      num_of_lines += 1 if key.include?("from")
     end
 
     {
@@ -37,14 +37,14 @@ class DataProcessor
   def parse_csv_file(file)
     content = file[:tempfile].read
     lines = content.split("\r\n")
-    
+
     # Skip header row and parse data
     data = []
     lines.each_with_index do |line, i|
       next if i.zero?
-      line.split(',').each { |value| data.push(value) }
+      line.split(",").each { |value| data.push(value) }
     end
-    
+
     data
   end
-end 
+end
