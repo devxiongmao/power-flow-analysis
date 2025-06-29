@@ -1,7 +1,7 @@
-### From v0.1.15 to HEAD
+### From v0.1.16 to HEAD
 
-- Bump matrix from 0.4.2 to 0.4.3 (#50) (5be47a9) by dependabot[bot]
-- Bump rubocop from 1.76.1 to 1.77.0 (#51) (f1cd5de) by dependabot[bot]
+-  NO-JIRA: Adds specs for power flow analysis object (#54) (7a1567c) by Jon
+- Major refactor: Breakup of app.rb (#53) (751444b) by Jon
 
 Please see our [releases](https://github.com/devxiongmao/power-flow-analysis/releases) page for previous changelogs per version.
 
