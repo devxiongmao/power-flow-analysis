@@ -34,13 +34,13 @@ RSpec.describe PowerFlowAnalyzer do
   let(:mock_y_bus_creator) { instance_double('YBusCreator') }
   let(:mock_y_bus) do
     [
-      [[0.5, 0.1], [0.2, 0.05], [0.1, 0.02]],
-      [[0.2, 0.05], [0.6, 0.12], [0.15, 0.03]],
-      [[0.1, 0.02], [0.15, 0.03], [0.4, 0.08]]
+      [ [ 0.5, 0.1 ], [ 0.2, 0.05 ], [ 0.1, 0.02 ] ],
+      [ [ 0.2, 0.05 ], [ 0.6, 0.12 ], [ 0.15, 0.03 ] ],
+      [ [ 0.1, 0.02 ], [ 0.15, 0.03 ], [ 0.4, 0.08 ] ]
     ]
   end
-  let(:from_bus) { [0, 1, 0] }
-  let(:to_bus) { [1, 2, 2] }
+  let(:from_bus) { [ 0, 1, 0 ] }
+  let(:to_bus) { [ 1, 2, 2 ] }
 
   before do
     allow(YBusCreator).to receive(:new).and_return(mock_y_bus_creator)
@@ -88,15 +88,15 @@ RSpec.describe PowerFlowAnalyzer do
 
   describe '#analyze' do
     let(:mock_cramer) { instance_double('CramersRule') }
-    
+
     before do
       allow(CramersRule).to receive(:new).and_return(mock_cramer)
       # Mock the cramers_rule to return very small corrections to make iteration converge quickly
-      allow(mock_cramer).to receive(:cramers_rule).and_return([0.0000001, 0.0000001, 0.0000001])
-      
+      allow(mock_cramer).to receive(:cramers_rule).and_return([ 0.0000001, 0.0000001, 0.0000001 ])
+
       # Mock the calculate_power_values method to return values that will converge quickly
       allow(analyzer).to receive(:calculate_power_values).and_return(
-        [analyzer.instance_variable_get(:@p_data), analyzer.instance_variable_get(:@q_data)]
+        [ analyzer.instance_variable_get(:@p_data), analyzer.instance_variable_get(:@q_data) ]
       )
     end
 
@@ -105,20 +105,20 @@ RSpec.describe PowerFlowAnalyzer do
       expect(mock_y_bus_creator).to receive(:create_y_bus).with(3)
       expect(mock_y_bus_creator).to receive(:return_from_bus_list)
       expect(mock_y_bus_creator).to receive(:return_to_bus_list)
-      
+
       analyzer.analyze
     end
 
     it 'returns a hash with expected keys' do
       result = analyzer.analyze
-      
+
       expected_keys = [
         :num_of_buses, :types, :v_data, :d_data, :p_data, :q_data,
         :del_degree, :z, :p_injection, :q_injection, :power_generated,
         :reactive_generated, :totals, :y_bus, :from_bus, :to_bus,
         :pl_data, :ql_data, :line_loss_1, :line_loss_2
       ]
-      
+
       expect(result.keys).to match_array(expected_keys)
     end
 
@@ -129,7 +129,7 @@ RSpec.describe PowerFlowAnalyzer do
 
     it 'includes bus types in result' do
       result = analyzer.analyze
-      expect(result[:types]).to eq(['Slack', 'Generator', 'Load'])
+      expect(result[:types]).to eq([ 'Slack', 'Generator', 'Load' ])
     end
   end
 
@@ -144,14 +144,14 @@ RSpec.describe PowerFlowAnalyzer do
     describe '#get_load_bus_numbers' do
       it 'returns correct load bus indices' do
         load_buses = analyzer.send(:get_load_bus_numbers)
-        expect(load_buses).to eq([2])
+        expect(load_buses).to eq([ 2 ])
       end
     end
 
     describe '#calculate_power_values' do
       it 'calculates power values for all buses' do
         p_values, q_values = analyzer.send(:calculate_power_values, mock_y_bus)
-        
+
         expect(p_values).to be_an(Array)
         expect(q_values).to be_an(Array)
         expect(p_values.length).to eq(3)
@@ -162,24 +162,24 @@ RSpec.describe PowerFlowAnalyzer do
     end
 
     describe '#build_error_vector' do
-      let(:dP) { [0.1, 0.05] }
-      let(:dQ) { [0.02] }
+      let(:dP) { [ 0.1, 0.05 ] }
+      let(:dQ) { [ 0.02 ] }
 
       it 'combines dP and dQ vectors correctly' do
         error_vector = analyzer.send(:build_error_vector, dP, dQ)
-        expect(error_vector).to eq([0.1, 0.05, 0.02])
+        expect(error_vector).to eq([ 0.1, 0.05, 0.02 ])
       end
     end
 
     describe '#calculate_voltage_magnitudes' do
       before do
-        analyzer.instance_variable_set(:@v_data, [1.05, 1.04, 1.0])
-        analyzer.instance_variable_set(:@d_data, [0.0, 0.1, -0.05])
+        analyzer.instance_variable_set(:@v_data, [ 1.05, 1.04, 1.0 ])
+        analyzer.instance_variable_set(:@d_data, [ 0.0, 0.1, -0.05 ])
       end
 
       it 'calculates voltage magnitudes correctly' do
         v_mag = analyzer.send(:calculate_voltage_magnitudes)
-        
+
         expect(v_mag).to be_an(Array)
         expect(v_mag.length).to eq(3)
         v_mag.each do |vm|
@@ -193,12 +193,12 @@ RSpec.describe PowerFlowAnalyzer do
 
     describe '#calculate_angle_degrees' do
       before do
-        analyzer.instance_variable_set(:@d_data, [0.0, 0.1, -0.05])
+        analyzer.instance_variable_set(:@d_data, [ 0.0, 0.1, -0.05 ])
       end
 
       it 'converts radians to degrees correctly' do
         degrees = analyzer.send(:calculate_angle_degrees)
-        
+
         expect(degrees).to be_an(Array)
         expect(degrees.length).to eq(3)
         expect(degrees[0]).to be_within(0.001).of(0.0)
@@ -209,17 +209,17 @@ RSpec.describe PowerFlowAnalyzer do
 
     describe '#calculate_totals' do
       before do
-        analyzer.instance_variable_set(:@p_injection, [10.0, 20.0, 30.0])
-        analyzer.instance_variable_set(:@q_injection, [5.0, 10.0, 15.0])
-        analyzer.instance_variable_set(:@power_generated, [15.0, 25.0, 35.0])
-        analyzer.instance_variable_set(:@reactive_generated, [8.0, 12.0, 18.0])
-        analyzer.instance_variable_set(:@pl_data, [0.1, 0.2, 0.45])
-        analyzer.instance_variable_set(:@ql_data, [0.0, 0.1, 0.15])
+        analyzer.instance_variable_set(:@p_injection, [ 10.0, 20.0, 30.0 ])
+        analyzer.instance_variable_set(:@q_injection, [ 5.0, 10.0, 15.0 ])
+        analyzer.instance_variable_set(:@power_generated, [ 15.0, 25.0, 35.0 ])
+        analyzer.instance_variable_set(:@reactive_generated, [ 8.0, 12.0, 18.0 ])
+        analyzer.instance_variable_set(:@pl_data, [ 0.1, 0.2, 0.45 ])
+        analyzer.instance_variable_set(:@ql_data, [ 0.0, 0.1, 0.15 ])
       end
 
       it 'calculates totals correctly' do
         totals = analyzer.send(:calculate_totals)
-        
+
         expect(totals[:pTotal]).to eq(60.0)
         expect(totals[:qTotal]).to eq(30.0)
         expect(totals[:pgTotal]).to eq(75.0)
@@ -284,24 +284,24 @@ RSpec.describe PowerFlowAnalyzer do
 
   describe 'integration test with mocked convergence' do
     let(:mock_cramer) { instance_double('CramersRule') }
-    
+
     before do
       allow(CramersRule).to receive(:new).and_return(mock_cramer)
       # Mock convergence by returning small corrections
-      allow(mock_cramer).to receive(:cramers_rule).and_return([0.000001, 0.000001, 0.000001])
-      
+      allow(mock_cramer).to receive(:cramers_rule).and_return([ 0.000001, 0.000001, 0.000001 ])
+
       # Mock calculate_power_values to return values that will converge quickly
       allow(analyzer).to receive(:calculate_power_values).and_return(
-        [analyzer.instance_variable_get(:@p_data), analyzer.instance_variable_get(:@q_data)]
+        [ analyzer.instance_variable_get(:@p_data), analyzer.instance_variable_get(:@q_data) ]
       )
     end
 
     it 'completes full analysis workflow' do
       result = analyzer.analyze
-      
+
       expect(result).to be_a(Hash)
       expect(result[:num_of_buses]).to eq(3)
-      expect(result[:types]).to eq(['Slack', 'Generator', 'Load'])
+      expect(result[:types]).to eq([ 'Slack', 'Generator', 'Load' ])
       expect(result[:v_data]).to all(be_a(Numeric))
       expect(result[:d_data]).to all(be_a(Numeric))
       expect(result[:totals]).to be_a(Hash)
