@@ -1,7 +1,8 @@
-### From v1.0.2 to HEAD
+### From v1.0.3 to HEAD
 
-- Bump puma from 6.6.0 to 6.6.1 (#62) (680b23e) by dependabot[bot]
-- Bump rubocop from 1.79.0 to 1.79.1 (#61) (52b5036) by dependabot[bot]
+- Bump rubocop from 1.79.1 to 1.79.2 (#65) (f8891ed) by dependabot[bot]
+- NO-JIRA: Update dependabot check frequency (#66) (c85edb9) by Jon
+- NO-JIRA: Update pull request template (#64) (7534189) by Jon
 
 Please see our [releases](https://github.com/devxiongmao/power-flow-analysis/releases) page for previous changelogs per version.
 
