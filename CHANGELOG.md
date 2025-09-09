@@ -1,7 +1,8 @@
-### From v1.0.4 to HEAD
+### From v1.0.5 to HEAD
 
-- Bump rubocop from 1.79.2 to 1.80.0 (#69) (6c5ca3c) by dependabot[bot]
-- Bump actions/checkout from 4 to 5 (#68) (23aa3d5) by dependabot[bot]
+- Bump actions/github-script from 7 to 8 (#72) (c30611b) by dependabot[bot]
+- Bump rubocop from 1.80.0 to 1.80.2 (#73) (787b192) by dependabot[bot]
+- Bump puma from 6.6.1 to 7.0.1 (#74) (e68ccb4) by dependabot[bot]
 
 Please see our [releases](https://github.com/devxiongmao/power-flow-analysis/releases) page for previous changelogs per version.
 
