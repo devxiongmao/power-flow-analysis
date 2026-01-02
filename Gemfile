@@ -27,5 +27,5 @@ group :test do
   gem "rack-test"
 end
 
-gem "rackup", "~> 2.2"
+gem "rackup", "~> 2.3"
 gem "puma", "~> 7.1"
