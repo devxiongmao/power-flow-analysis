@@ -1,9 +1,11 @@
-### From v1.0.7 to HEAD
+### From v1.0.8 to HEAD
 
-- Bump rspec from 3.13.1 to 3.13.2 (#84) (b1b7f15) by dependabot[bot]
-- NO-JIRA: Update dependabot check frequency for bundler (#86) (e58ebad) by Jon
-- Bump rubocop from 1.81.1 to 1.81.7 (#85) (1303467) by dependabot[bot]
-- Bump puma from 7.0.4 to 7.1.0 (#82) (198b59d) by dependabot[bot]
+- Bump pry from 0.15.2 to 0.16.0 (#92) (195f999) by dependabot[bot]
+- Bump rackup from 2.2.1 to 2.3.1 (#93) (279dcc1) by dependabot[bot]
+- Bump actions/checkout from 5 to 6 (#88) (776610b) by dependabot[bot]
+- Bump rubocop from 1.81.7 to 1.82.1 (#90) (1a0971b) by dependabot[bot]
+- Bump webrick from 1.9.1 to 1.9.2 (#89) (1689d07) by dependabot[bot]
+- Bump brakeman from 7.1.1 to 7.1.2 (#91) (a0a4291) by dependabot[bot]
 
 Please see our [releases](https://github.com/devxiongmao/power-flow-analysis/releases) page for previous changelogs per version.
 
