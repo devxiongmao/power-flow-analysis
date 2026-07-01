@@ -28,4 +28,4 @@ group :test do
 end
 
 gem "rackup", "~> 2.3"
-gem "puma", "~> 7.1"
+gem "puma", "~> 8.0"
